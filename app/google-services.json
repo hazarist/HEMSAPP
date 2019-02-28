@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "805479187516",
+    "firebase_url": "https://hemsapp-4ef38.firebaseio.com",
+    "project_id": "hemsapp-4ef38",
+    "storage_bucket": "hemsapp-4ef38.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:805479187516:android:e2bdad133693cb31",
+        "android_client_info": {
+          "package_name": "com.example.hemsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "805479187516-2oc2krtnl5mebe63ftqs3fri4nkql362.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.hemsapp",
+            "certificate_hash": "61761d199e8218e350a0399b482009b7dfeaf9af"
+          }
+        },
+        {
+          "client_id": "805479187516-16kamav1i44crf3s6r7l06mf2fgcomu2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqfDGRiHe8YR66fXetJzlfm1s5jfq3agY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "805479187516-16kamav1i44crf3s6r7l06mf2fgcomu2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
