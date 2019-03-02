@@ -4,23 +4,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="40dp"
+    android:layout_margin="20dp"
     android:gravity="center"
     android:orientation="vertical"
+    android:padding="20dp"
     tools:context=".RegisterActivity">
 
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="match_parent"
-        android:layout_height="154dp"
-        android:layout_marginBottom="20dp"
+        android:layout_height="125dp"
+        android:layout_marginBottom="10dp"
         app:srcCompat="@mipmap/app_logo" />
+
+    <EditText
+        android:id="@+id/etName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:ems="10"
+        android:hint="@string/rs_name"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/etSurName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:ems="10"
+        android:hint="@string/rs_surname"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/etBirthDay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:ems="10"
+        android:hint="@string/rs_birthDay"
+        android:inputType="date" />
 
     <EditText
         android:id="@+id/etUserName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="5dp"
         android:ems="10"
         android:hint="@string/user_name"
         android:inputType="textPersonName" />
@@ -29,7 +57,7 @@
         android:id="@+id/etEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="5dp"
         android:ems="10"
         android:hint="@string/user_email"
         android:inputType="textEmailAddress" />
@@ -38,16 +66,49 @@
         android:id="@+id/etPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="5dp"
         android:ems="10"
         android:hint="@string/user_password"
         android:inputType="textPassword" />
+
+    <TextView
+        android:id="@+id/tvGender"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:fontFamily="sans-serif"
+        android:paddingLeft="3dp"
+        android:text="@string/rs_gender"
+        android:textColor="@color/gri"
+        android:textSize="18sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp">
+
+        <RadioButton
+            android:id="@+id/rbMale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/rs_male"
+            android:textColor="@color/gri" />
+
+        <RadioButton
+            android:id="@+id/rbFemale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/rs_female"
+            android:textColor="@color/gri" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/btnSubmit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="5dp"
         android:text="@string/btn_submit"
         android:textAllCaps="false" />
 
@@ -55,6 +116,7 @@
         android:id="@+id/tvAlreadyExist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
         android:gravity="center"
         android:text="@string/account_already_exist" />
 </LinearLayout>

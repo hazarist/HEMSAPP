@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(currentUser == null){
             startActivityLogin();
-            Toast.makeText(getApplicationContext(),"Lütfen giriş yapınız.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"Please Login.",Toast.LENGTH_SHORT).show();
         }
     }
 

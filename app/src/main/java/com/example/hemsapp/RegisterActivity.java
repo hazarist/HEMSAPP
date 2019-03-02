@@ -2,13 +2,17 @@ package com.example.hemsapp;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,16 +20,32 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import org.w3c.dom.Text;
+
+import java.sql.Date;
+import java.util.HashMap;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private EditText etName;
+    private EditText etSurName;
     private EditText etUserName;
+    private EditText etBirthDay;
     private EditText etEmail;
     private EditText etPassword;
     private Button btnSubmit;
     private TextView tvAlreadyExist;
     private FirebaseAuth mAuth;
     private ProgressDialog pdRegister;
+    RadioGroup radioGroup;
+    RadioButton rbGenderMale;
+    RadioButton rbGenderFemale;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,14 +54,23 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         mAuth = FirebaseAuth.getInstance();
 
+        //Edit Texts
+        etName = findViewById(R.id.etName);
+        etSurName = findViewById(R.id.etSurName);
+        etBirthDay = findViewById(R.id.etBirthDay);
         etUserName = findViewById(R.id.etUserName);
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
+
+        //Buttons
         tvAlreadyExist = findViewById(R.id.tvAlreadyExist);
         btnSubmit = findViewById(R.id.btnSubmit);
+        rbGenderMale = findViewById(R.id.rbMale);
+        rbGenderFemale = findViewById(R.id.rbFemale);
 
         pdRegister = new ProgressDialog(this);
 
+        //Button Listeners
         btnSubmit.setOnClickListener(this);
         tvAlreadyExist.setOnClickListener(this);
 
@@ -61,32 +90,67 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             String userName = etUserName.getText().toString();
             String email = etEmail.getText().toString();
             String password = etPassword.getText().toString();
+            String name = etName.getText().toString();
+            String surName = etSurName.getText().toString();
+            String status = ProfileStatus.Available.toString();
+            String position = UserRole.Employee.toString();
+            String image = "default";
+            String thumbImage = "default";
 
-            if(!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)){
-                pdRegister.setTitle("Kayıt ediliyor.");
-                pdRegister.setMessage("Hesabınız oluşturuluyor. Lütfen bekleyiniz..");
+
+
+            if(!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password) && !TextUtils.isEmpty(name) && !TextUtils.isEmpty(surName)){
+                pdRegister.setTitle("Enrolling.");
+                pdRegister.setMessage("Creating your account.. Please wait ..");
                 pdRegister.setCanceledOnTouchOutside(false);
                 pdRegister.show();
-                registerUser(userName,email,password);
+
+                registerUser(name,surName,userName, email,position,status,image,thumbImage,password);
             }
         }
 
     }
 
-    private void registerUser(String userName,String email,String password){
+    private void registerUser(final String name, final String surName, final String userName, final String email, final String position, final String status, final String image, final String thumbImage, String password){
+
         mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
-                    pdRegister.dismiss();
-                    Intent loginIntent = new Intent(RegisterActivity.this,LoginActivity.class);
-                    startActivity(loginIntent);
-                    finish();
-                    Toast.makeText(getApplicationContext(),"Hesabınız başarıyla oluşturuldu.",Toast.LENGTH_SHORT).show();
+
+                    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                    String uid = currentUser.getUid();
+
+                    firebaseDatabase = FirebaseDatabase.getInstance();
+
+                    databaseReference = firebaseDatabase.getReference().child("Users").child(uid);
+
+                    User newUSer = new User(name,surName,userName,email,position,status,image,thumbImage);
+
+                    databaseReference.setValue(newUSer).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                pdRegister.dismiss();
+
+                                Intent loginIntent = new Intent(RegisterActivity.this,LoginActivity.class);
+                                startActivity(loginIntent);
+                                finish();
+
+                                Toast.makeText(getApplicationContext(),"Your account created successfully.",Toast.LENGTH_SHORT).show();
+                            }else
+                            {
+                                pdRegister.dismiss();
+                                Toast.makeText(getApplicationContext(),"Error!" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
                 }else
                 {
                     pdRegister.dismiss();
-                    Toast.makeText(getApplicationContext(),"Hata!" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Error!" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
