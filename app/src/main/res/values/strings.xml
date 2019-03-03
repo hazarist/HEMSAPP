@@ -22,4 +22,8 @@
     <string name="rs_gender">Gender</string>
     <string name="rs_male">Male</string>
     <string name="rs_female">Female</string>
+    <string name="rs_user_name">Name</string>
+    <string name="rs_status">Status</string>
+    <string name="change_image">Change Image</string>
+    <string name="btnSettings">Account Settings</string>
 </resources>

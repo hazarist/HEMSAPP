@@ -77,7 +77,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                                            User currentUser = dataSnapshot.getValue(User.class);
+                                         User currentUser = dataSnapshot.getValue(User.class);
 
 
                                          if(currentUser.getPosition().equals("Employee")){
