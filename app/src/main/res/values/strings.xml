@@ -17,7 +17,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="rs_name">Name</string>
-    <string name="rs_surname" >Surname</string>
+    <string name="rs_surname">Surname</string>
     <string name="rs_birthDay">Birth Day</string>
     <string name="rs_gender">Gender</string>
     <string name="rs_male">Male</string>
