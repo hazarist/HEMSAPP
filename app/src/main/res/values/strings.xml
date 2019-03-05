@@ -26,4 +26,7 @@
     <string name="rs_status">Status</string>
     <string name="change_image">Change Image</string>
     <string name="btnSettings">Account Settings</string>
+    <string name="btnAllUsers">All Users</string>
+    <string name="rs_user_single_name" />
+    <string name="rs_user_single_status">USer Status</string>
 </resources>

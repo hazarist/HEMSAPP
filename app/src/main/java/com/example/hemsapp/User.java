@@ -25,16 +25,16 @@ public class User {
         this.thumbImage = thumbImage;
 ;    }
 
-    public User() {
-        this.Name = "";
-        this.Surname = "";
-        this.userName = "";
-        this.email = "";
-        this.position = "";
-        this.status = "";
-        this.image = "";
-        this.thumbImage = "";
+    public User(String name,String surname, String image, String thumbImage) {
+        this.Name = name;
+        this.Surname = surname;
+        this.image = image;
+        this.thumbImage = thumbImage;
     }
+
+    public User() {} // Firebase Required
+
+
 
     public String getName() {
         return Name;

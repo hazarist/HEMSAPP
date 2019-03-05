@@ -7,6 +7,10 @@
         android:title="@string/btnSettings" />
 
     <item
+        android:id="@+id/btnAllUsers"
+        android:title="@string/btnAllUsers" />
+
+    <item
         android:id="@+id/btnLogOut"
         android:title="@string/logout" />
 </menu>

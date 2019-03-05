@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="15dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ivUserSingleImage"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@mipmap/profile" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvUserSingleName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/rs_user_single_name"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                tools:text="User Name" />
+
+            <TextView
+                android:id="@+id/tvSingleStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:text="@string/rs_user_single_status"
+                android:textColor="@color/gri"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="@android:color/darker_gray"
+        android:visibility="visible" />
+
+</LinearLayout>

@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="20dp"
-    android:gravity="center"
+    android:gravity="center|top"
     android:orientation="vertical"
     android:padding="20dp"
     tools:context=".RegisterActivity">
@@ -13,7 +12,7 @@
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="match_parent"
-        android:layout_height="125dp"
+        android:layout_height="118dp"
         android:layout_marginBottom="10dp"
         app:srcCompat="@mipmap/app_logo" />
 
@@ -78,6 +77,7 @@
         android:layout_marginBottom="5dp"
         android:fontFamily="sans-serif"
         android:paddingLeft="3dp"
+        android:paddingRight="3dp"
         android:text="@string/rs_gender"
         android:textColor="@color/gri"
         android:textSize="18sp" />
