@@ -1,7 +1,7 @@
 package com.example.hemsapp;
 
-import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,27 +23,26 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UsersActivity extends AppCompatActivity {
 
-    private Toolbar tbUsers;
-
     private RecyclerView rvUserList;
-
     private DatabaseReference usersDatabase;
-
-    private  FirebaseRecyclerAdapter<User, UsersViewHolder> firebaseRecyclerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users);
 
+        Toolbar tbUsers;
+
+
         tbUsers = findViewById(R.id.users_appBar);
         setSupportActionBar(tbUsers);
 
-        getSupportActionBar().setTitle("All Users");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("All Users");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         usersDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
-
 
         rvUserList = findViewById(R.id.rvUserList);
         rvUserList.setHasFixedSize(true);
@@ -55,6 +54,8 @@ public class UsersActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+        FirebaseRecyclerAdapter<User, UsersViewHolder> firebaseRecyclerAdapter;
+
         FirebaseRecyclerOptions<User> options=
                 new FirebaseRecyclerOptions.Builder<User>()
                         .setQuery(usersDatabase,User.class)
@@ -63,8 +64,9 @@ public class UsersActivity extends AppCompatActivity {
 
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<User, UsersViewHolder>(options) {
 
+            @NonNull
             @Override
-            public UsersViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            public UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                View view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.users_single_layout, parent, false);
 
@@ -72,7 +74,7 @@ public class UsersActivity extends AppCompatActivity {
             }
 
             @Override
-            protected void onBindViewHolder( UsersViewHolder holder, int position, User model) {
+            protected void onBindViewHolder(@NonNull UsersViewHolder holder, int position,@NonNull User model) {
                 holder.setName(model.getName());
                 holder.setStatus(model.getStatus());
                 holder.setUserImage(model.getThumbImage());
