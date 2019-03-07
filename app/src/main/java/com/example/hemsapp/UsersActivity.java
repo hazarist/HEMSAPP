@@ -1,7 +1,7 @@
 package com.example.hemsapp;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,10 +16,8 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -73,23 +71,21 @@ public class UsersActivity extends AppCompatActivity {
                 return new UsersViewHolder(view);
             }
 
-
-
             @Override
             protected void onBindViewHolder( UsersViewHolder holder, int position, User model) {
                 holder.setName(model.getName());
                 holder.setStatus(model.getStatus());
-                holder.setUserImage(model.getThumbImage(),getApplicationContext());
-              /*  holder.setThumb_image(model.getThumb_image(),getApplicationContext());
-                final String user_id=getRef(position).getKey();
-                holder.mview.setOnClickListener(new View.OnClickListener() {
+                holder.setUserImage(model.getThumbImage());
+
+                final String userID=getRef(position).getKey();
+                holder.view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent9=new Intent(UsersActivity.this,ProfileActivity.class);
-                        intent9.putExtra("user_id",user_id);
-                        startActivity(intent9);
+                        Intent intentProfile=new Intent(UsersActivity.this,ProfileActivity.class);
+                        intentProfile.putExtra("userID",userID);
+                        startActivity(intentProfile);
                     }
-                });*/
+                });
             }
         };
 
@@ -118,8 +114,7 @@ public class UsersActivity extends AppCompatActivity {
             tvUserStatus.setText(status);
         }
 
-        public void setUserImage(String thumbImage, Context ctx){
-            //TODO: Contexti nasıl buna ekleriz ? 
+        public void setUserImage(String thumbImage){
             CircleImageView userImageView = view.findViewById(R.id.ivUserSingleImage);
             Picasso.get().load(thumbImage).placeholder(R.mipmap.profile).into(userImageView);
         }

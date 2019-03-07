@@ -16,21 +16,21 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
 
-    private Toolbar mToolbar;
-
-    private ViewPager vPager;
-    private SectionPageAdapter sectionPageAdapter;
-    private TabLayout tabLayout;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Toolbar mToolbar;
+        ViewPager vPager;
+        SectionPageAdapter sectionPageAdapter;
+        TabLayout tabLayout;
+
         mAuth = FirebaseAuth.getInstance();
 
         mToolbar = findViewById(R.id.appBarLayout);
         setSupportActionBar(mToolbar);
+        if(getSupportActionBar() != null)
         getSupportActionBar().setTitle("Chat");
 
 

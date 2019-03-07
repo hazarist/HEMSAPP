@@ -69,7 +69,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
+                                if (task.isSuccessful() && mAuth != null && mAuth.getCurrentUser() != null) {
                                     firebaseDatabase = FirebaseDatabase.getInstance();
                                     databaseReference = firebaseDatabase.getReference("Users").child(mAuth.getCurrentUser().getUid());
 
@@ -79,8 +79,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                                          User currentUser = dataSnapshot.getValue(User.class);
 
-
-                                         if(currentUser.getPosition().equals("Employee")){
+                                         if(currentUser != null && currentUser.getPosition().equals("Employee")){
                                              Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                                              startActivity(mainIntent);
                                              finish();

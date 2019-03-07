@@ -3,31 +3,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/colorPrimary"
     android:orientation="vertical"
     android:paddingTop="15dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ivUserSingleImage"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:src="@mipmap/profile" />
+            android:padding="10dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="64dp"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvUserSingleName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="0dp"
                 android:text="@string/rs_user_single_name"
-                android:textColor="@android:color/black"
+                android:textColor="@android:color/white"
                 android:textSize="18sp"
                 tools:text="User Name" />
 
@@ -37,18 +41,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_weight="1"
+                android:paddingLeft="5dp"
+                android:paddingTop="3dp"
                 android:text="@string/rs_user_single_status"
-                android:textColor="@color/gri"
+                android:textColor="@android:color/white"
                 android:textSize="14sp" />
         </LinearLayout>
 
     </LinearLayout>
-
-    <View
-        android:id="@+id/divider2"
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="@android:color/darker_gray"
-        android:visibility="visible" />
 
 </LinearLayout>

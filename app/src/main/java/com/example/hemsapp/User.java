@@ -123,4 +123,8 @@ public class User {
     public void setGender(String gender) {
         this.gender = gender;
     }
+
+    public String getFullName(){
+        return this.Name + " " + this.Surname;
+    }
 }

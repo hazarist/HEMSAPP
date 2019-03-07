@@ -69,13 +69,14 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User currentUser = dataSnapshot.getValue(User.class);
-
-                tvUserName.setText(currentUser.getName() + " " + currentUser.getSurname());
+            if(currentUser != null) {
+                tvUserName.setText(currentUser.getFullName());
                 tvStatus.setText(currentUser.getStatus());
 
                 if (!currentUser.getImage().equals("default")) {
                     Picasso.get().load(currentUser.getImage()).placeholder(R.mipmap.profile).into(ivProfile);
                 }
+            }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -103,7 +104,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-            if(requestCode == GALLERY_PICK && resultCode == RESULT_OK){
+            if(data != null && requestCode == GALLERY_PICK && resultCode == RESULT_OK){
+
                 Uri imageUri = data.getData();
 
                 CropImage.activity(imageUri).setAspectRatio(1,1).start(this);
@@ -111,7 +113,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
             if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
                 CropImage.ActivityResult result = CropImage.getActivityResult(data);
-                if (resultCode == RESULT_OK) {
+                if (result != null && resultCode == RESULT_OK) {
 
                     progressDialog = new ProgressDialog(SettingsActivity.this);
                     progressDialog.setTitle("Uploading image..");
@@ -137,6 +139,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     }
 
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    if(thumbBitmap != null)
                         thumbBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                     final byte[] thumbByte = baos.toByteArray();
 
@@ -203,7 +206,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                             });
                         }
                     });
-                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                } else if (result != null && resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                     Exception error = result.getError();
                     Toast.makeText(getApplicationContext(),"Error! " + error,Toast.LENGTH_SHORT).show();
                 }
