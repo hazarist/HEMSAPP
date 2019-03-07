@@ -30,9 +30,6 @@ public class MainActivity extends AppCompatActivity {
 
         mToolbar = findViewById(R.id.appBarLayout);
         setSupportActionBar(mToolbar);
-        if(getSupportActionBar() != null)
-        getSupportActionBar().setTitle("Chat");
-
 
         //Tabs
         vPager = findViewById(R.id.viewPager);

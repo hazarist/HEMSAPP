@@ -28,6 +28,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -64,17 +66,30 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         currentUserData = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUser.getUid());
+        currentUserData.keepSynced(true);
 
         currentUserData.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User currentUser = dataSnapshot.getValue(User.class);
+               final User currentUser = dataSnapshot.getValue(User.class);
             if(currentUser != null) {
                 tvUserName.setText(currentUser.getFullName());
                 tvStatus.setText(currentUser.getStatus());
 
                 if (!currentUser.getImage().equals("default")) {
-                    Picasso.get().load(currentUser.getImage()).placeholder(R.mipmap.profile).into(ivProfile);
+//                    Picasso.get().load(currentUser.getImage()).placeholder(R.mipmap.profile).into(ivProfile);
+
+                Picasso.get().load(currentUser.getImage()).networkPolicy(NetworkPolicy.OFFLINE).placeholder(R.mipmap.profile).into(ivProfile, new Callback() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Picasso.get().load(currentUser.getImage()).placeholder(R.mipmap.profile).into(ivProfile);
+                    }
+                });
                 }
             }
             }
