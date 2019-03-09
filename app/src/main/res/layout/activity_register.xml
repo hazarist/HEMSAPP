@@ -4,24 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center|top"
+    android:gravity="center"
     android:orientation="vertical"
     android:padding="20dp"
     tools:context=".RegisterActivity">
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="match_parent"
-        android:layout_height="118dp"
-        android:layout_marginBottom="10dp"
-        app:srcCompat="@mipmap/app_logo" />
 
     <EditText
         android:id="@+id/etName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:ems="10"
+        android:backgroundTint="@color/gri"
+        android:ems="20"
         android:hint="@string/rs_name"
         android:inputType="textPersonName" />
 
@@ -30,7 +24,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:ems="10"
+        android:backgroundTint="@color/gri"
+        android:ems="20"
         android:hint="@string/rs_surname"
         android:inputType="textPersonName" />
 
@@ -39,25 +34,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:ems="10"
+        android:backgroundTint="@color/gri"
+        android:ems="20"
         android:hint="@string/rs_birthDay"
         android:inputType="date" />
-
-    <EditText
-        android:id="@+id/etUserName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:ems="10"
-        android:hint="@string/user_name"
-        android:inputType="textPersonName" />
 
     <EditText
         android:id="@+id/etEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:ems="10"
+        android:backgroundTint="@color/gri"
+        android:ems="20"
         android:hint="@string/user_email"
         android:inputType="textEmailAddress" />
 
@@ -66,8 +54,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:ems="10"
+        android:backgroundTint="@color/gri"
+        android:ems="20"
         android:hint="@string/user_password"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/etPassword2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:backgroundTint="@color/gri"
+        android:ems="20"
+        android:hint="@string/user_password2"
         android:inputType="textPassword" />
 
     <TextView
@@ -92,6 +91,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:backgroundTint="@color/gri"
+            android:buttonTint="@color/gri"
             android:text="@string/rs_male"
             android:textColor="@color/gri" />
 
@@ -100,6 +101,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:backgroundTint="@color/gri"
+            android:buttonTint="@color/gri"
             android:text="@string/rs_female"
             android:textColor="@color/gri" />
     </LinearLayout>

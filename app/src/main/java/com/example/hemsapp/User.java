@@ -5,7 +5,6 @@ public class User {
 
     private String Name;
     private String Surname;
-    private String userName;
     private Date birthDay;
     private String email;
     private String position;
@@ -16,10 +15,9 @@ public class User {
     private String deviceToken;
     private Boolean online;
 
-    public User(String name, String surname, String userName, String email, String position, String status, String image, String thumbImage, String deviceToken) {
+    public User(String name, String surname, String email, String position, String status, String image, String thumbImage, String deviceToken) {
         this.Name = name;
         this.Surname = surname;
-        this.userName = userName;
         this.email = email;
         this.position = position;
         this.status = status;
@@ -100,14 +98,6 @@ public class User {
 
     public void setThumbImage(String thumbImage) {
         this.thumbImage = thumbImage;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public Date getBirthDay() {

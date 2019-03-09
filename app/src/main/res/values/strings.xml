@@ -31,4 +31,5 @@
     <string name="rs_user_single_status">USer Status</string>
     <string name="rs_profile_user_name">User Name</string>
     <string name="rs_welcome">Welcome to chat page</string>
+    <string name="user_password2">Please Enter Your Password Again.</string>
 </resources>

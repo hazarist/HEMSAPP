@@ -36,10 +36,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     private EditText etName;
     private EditText etSurName;
-    private EditText etUserName;
     private EditText etBirthDay;
     private EditText etEmail;
     private EditText etPassword;
+    private EditText etPassword2;
     private Button btnSubmit;
     private TextView tvAlreadyExist;
     private FirebaseAuth mAuth;
@@ -61,10 +61,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         etName = findViewById(R.id.etName);
         etSurName = findViewById(R.id.etSurName);
         etBirthDay = findViewById(R.id.etBirthDay);
-        etUserName = findViewById(R.id.etUserName);
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
-
+        etPassword2 = findViewById(R.id.etPassword2);
         //Buttons
         tvAlreadyExist = findViewById(R.id.tvAlreadyExist);
         btnSubmit = findViewById(R.id.btnSubmit);
@@ -90,9 +89,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         }
 
         if(v.getId() == btnSubmit.getId()){
-            String userName = etUserName.getText().toString();
             String email = etEmail.getText().toString();
             String password = etPassword.getText().toString();
+            String password2 = etPassword2.getText().toString();
             String name = etName.getText().toString();
             String surName = etSurName.getText().toString();
             String status = ProfileStatus.Available.toString();
@@ -102,19 +101,25 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
 
-            if(!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password) && !TextUtils.isEmpty(name) && !TextUtils.isEmpty(surName)){
-                pdRegister.setTitle("Enrolling.");
-                pdRegister.setMessage("Creating your account.. Please wait ..");
-                pdRegister.setCanceledOnTouchOutside(false);
-                pdRegister.show();
-                String deviceToken = FirebaseInstanceId.getInstance().getToken();
-                registerUser(name,surName,userName, email,position,status,image,thumbImage,password,deviceToken);
+            if(!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password) && !TextUtils.isEmpty(password2) && !TextUtils.isEmpty(name) && !TextUtils.isEmpty(surName)){
+                if(password.equals(password2)) {
+                    pdRegister.setTitle("Enrolling.");
+                    pdRegister.setMessage("Creating your account.. Please wait ..");
+                    pdRegister.setCanceledOnTouchOutside(false);
+                    pdRegister.show();
+                    String deviceToken = FirebaseInstanceId.getInstance().getToken();
+                    registerUser(name, surName, email, position, status, image, thumbImage, password, deviceToken);
+                }else {
+                    Toast.makeText(getApplicationContext(),"Passwords are not same!", Toast.LENGTH_SHORT).show();
+                }
+            }else{
+                Toast.makeText(getApplicationContext(),"Please fill the blanks correctly.", Toast.LENGTH_SHORT).show();
             }
         }
 
     }
 
-    private void registerUser(final String name, final String surName, final String userName, final String email, final String position, final String status, final String image, final String thumbImage, String password, final String deviceToken){
+    private void registerUser(final String name, final String surName, final String email, final String position, final String status, final String image, final String thumbImage, String password, final String deviceToken){
 
         mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
@@ -129,7 +134,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                     databaseReference = firebaseDatabase.getReference().child("Users").child(uid);
 
-                    User newUSer = new User(name,surName,userName,email,position,status,image,thumbImage,deviceToken);
+                    User newUSer = new User(name,surName,email,position,status,image,thumbImage,deviceToken);
 
                             databaseReference.setValue(newUSer).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override

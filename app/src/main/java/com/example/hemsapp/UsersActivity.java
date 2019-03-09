@@ -74,7 +74,7 @@ public class UsersActivity extends AppCompatActivity {
 
             @Override
             protected void onBindViewHolder(@NonNull UsersViewHolder holder, int position,@NonNull User model) {
-                holder.setName(model.getName());
+                holder.setName(model.getFullName());
                 holder.setStatus(model.getStatus());
                 holder.setUserImage(model.getThumbImage());
 

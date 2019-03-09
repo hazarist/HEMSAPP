@@ -25,6 +25,7 @@
         android:fontFamily="sans-serif"
         android:gravity="center"
         android:text="@string/tv_login"
+        android:textColorLink="@android:color/white"
         tools:text="@string/tv_login" />
 
     <EditText
@@ -32,6 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/gri"
         android:ems="10"
         android:inputType="textEmailAddress"
         tools:hint="@string/et_email" />
@@ -41,9 +43,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/gri"
         android:ems="10"
         android:hint="@string/et_password"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:textColorLink="@android:color/white" />
 
     <Button
         android:id="@+id/btnLogin"
@@ -53,6 +57,7 @@
         android:fontFamily="sans-serif"
         android:text="@string/btn_login"
         android:textAllCaps="false"
+        android:textColorLink="@android:color/white"
         tools:text="@string/btn_login" />
 
     <TextView
@@ -61,6 +66,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/tv_need_account"
+        android:textColorLink="@android:color/white"
         tools:text="@string/tv_need_account" />
 
 </LinearLayout>
