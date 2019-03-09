@@ -1,5 +1,6 @@
 package com.example.hemsapp;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,6 +24,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
 
@@ -33,20 +37,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     FirebaseAuth mAuth;
 
-    FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
+
+    ProgressDialog progressDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        
+
+
+
         mAuth = FirebaseAuth.getInstance();
-        
+
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
         tvCreateAccount = findViewById(R.id.tvNeedAccount);
+
+
 
         tvCreateAccount.setOnClickListener(this);
         btnLogin.setOnClickListener(this);
@@ -65,41 +75,41 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             String password = etPassword.getText().toString();
 
             if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
+
+                progressDialog = new ProgressDialog(this);
+                progressDialog.setTitle("Logging in.");
+                progressDialog.setMessage("Please wait while we check your credentials.");
+                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.show();
+
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful() && mAuth != null && mAuth.getCurrentUser() != null) {
-                                    firebaseDatabase = FirebaseDatabase.getInstance();
-                                    databaseReference = firebaseDatabase.getReference("Users").child(mAuth.getCurrentUser().getUid());
 
-                                    databaseReference.addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            String currentUserID = mAuth.getCurrentUser().getUid();
+                                            String deviceToken = FirebaseInstanceId.getInstance().getToken();
+                                            databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
 
-                                         User currentUser = dataSnapshot.getValue(User.class);
+                                    databaseReference.child(currentUserID).child("deviceToken").setValue(deviceToken).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
 
-                                         if(currentUser != null && currentUser.getPosition().equals("Employee")){
-                                             Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                                             startActivity(mainIntent);
-                                             finish();
-                                             Toast.makeText(getApplicationContext(), "Login process is successful.", Toast.LENGTH_SHORT).show();
-                                         }
-
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                        }
-                                    });
+                                                        Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                                                        startActivity(mainIntent);
+                                                        finish();
+                                                        Toast.makeText(getApplicationContext(), "Login process is successful.", Toast.LENGTH_SHORT).show();
+                                                        progressDialog.dismiss();
+                                                }
+                                            });
 
                                 } else {
                                     // If sign in fails, display a message to the user.
-                                    Toast.makeText(getApplicationContext(), "Error! " + task.getException(), Toast.LENGTH_SHORT).show();
-                                }
+                                    progressDialog.dismiss();
+                                    Toast.makeText(getApplicationContext(), "Error! " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
 
-                                // ...
+                                }
                             }
                         });
             }else {

@@ -33,7 +33,6 @@ public class UsersActivity extends AppCompatActivity {
 
         Toolbar tbUsers;
 
-
         tbUsers = findViewById(R.id.users_appBar);
         setSupportActionBar(tbUsers);
 

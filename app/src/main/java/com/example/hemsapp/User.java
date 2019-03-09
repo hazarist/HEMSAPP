@@ -13,8 +13,10 @@ public class User {
     private String image;
     private String thumbImage;
     private String gender;
+    private String deviceToken;
+    private Boolean online;
 
-    public User(String name, String surname, String userName, String email, String position, String status, String image, String thumbImage) {
+    public User(String name, String surname, String userName, String email, String position, String status, String image, String thumbImage, String deviceToken) {
         this.Name = name;
         this.Surname = surname;
         this.userName = userName;
@@ -23,18 +25,18 @@ public class User {
         this.status = status;
         this.image = image;
         this.thumbImage = thumbImage;
+        this.deviceToken = deviceToken;
 ;    }
 
-    public User(String name,String surname, String image, String thumbImage) {
+    public User(String name,String surname, String image, String thumbImage,Boolean online) {
         this.Name = name;
         this.Surname = surname;
         this.image = image;
         this.thumbImage = thumbImage;
+        this.online = online;
     }
 
     public User() {} // Firebase Required
-
-
 
     public String getName() {
         return Name;
@@ -122,6 +124,22 @@ public class User {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public String getDeviceToken() {
+        return deviceToken;
+    }
+
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
+    }
+
+    public Boolean getOnline() {
+        return online;
+    }
+
+    public void setOnline(Boolean online) {
+        this.online = online;
     }
 
     public String getFullName(){

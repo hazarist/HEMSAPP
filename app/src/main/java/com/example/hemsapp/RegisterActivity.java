@@ -17,12 +17,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.w3c.dom.Text;
 
@@ -104,14 +107,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 pdRegister.setMessage("Creating your account.. Please wait ..");
                 pdRegister.setCanceledOnTouchOutside(false);
                 pdRegister.show();
-
-                registerUser(name,surName,userName, email,position,status,image,thumbImage,password);
+                String deviceToken = FirebaseInstanceId.getInstance().getToken();
+                registerUser(name,surName,userName, email,position,status,image,thumbImage,password,deviceToken);
             }
         }
 
     }
 
-    private void registerUser(final String name, final String surName, final String userName, final String email, final String position, final String status, final String image, final String thumbImage, String password){
+    private void registerUser(final String name, final String surName, final String userName, final String email, final String position, final String status, final String image, final String thumbImage, String password, final String deviceToken){
 
         mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
@@ -126,30 +129,29 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                     databaseReference = firebaseDatabase.getReference().child("Users").child(uid);
 
-                    User newUSer = new User(name,surName,userName,email,position,status,image,thumbImage);
+                    User newUSer = new User(name,surName,userName,email,position,status,image,thumbImage,deviceToken);
 
-                    databaseReference.setValue(newUSer).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                                pdRegister.dismiss();
-
-                                Intent loginIntent = new Intent(RegisterActivity.this,LoginActivity.class);
-                                startActivity(loginIntent);
-                                finish();
-
-                                Toast.makeText(getApplicationContext(),"Your account created successfully.",Toast.LENGTH_SHORT).show();
-                            }else
-                            {
-                                pdRegister.dismiss();
-                                Toast.makeText(getApplicationContext(),"Error!" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                            databaseReference.setValue(newUSer).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Intent loginIntent = new Intent(RegisterActivity.this,LoginActivity.class);
+                                    startActivity(loginIntent);
+                                    finish();
+                                    pdRegister.dismiss();
+                                    Toast.makeText(getApplicationContext(),"Your account created successfully.",Toast.LENGTH_SHORT).show();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    pdRegister.dismiss();
+                                    Toast.makeText(getApplicationContext(),"Error!" + e.getMessage(),Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
                 }else
                 {
                     pdRegister.dismiss();
+                    if(task.getException() != null)
                     Toast.makeText(getApplicationContext(),"Error!" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }

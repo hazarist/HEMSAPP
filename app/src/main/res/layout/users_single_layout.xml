@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorPrimary"
+    android:background="@android:color/white"
     android:orientation="vertical"
-    android:paddingTop="15dp">
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@android:color/white"
         android:orientation="horizontal">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -23,17 +25,32 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvUserSingleName"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="5dp"
-                android:paddingTop="5dp"
-                android:paddingBottom="0dp"
-                android:text="@string/rs_user_single_name"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                tools:text="User Name" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvUserSingleName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="0dp"
+                    android:text="@string/rs_user_single_name"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    tools:text="User Name" />
+
+                <ImageView
+                    android:id="@+id/ivOnlineIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="7dp"
+                    android:visibility="invisible"
+                    app:srcCompat="@android:drawable/presence_online" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tvSingleStatus"
@@ -44,10 +61,17 @@
                 android:paddingLeft="5dp"
                 android:paddingTop="3dp"
                 android:text="@string/rs_user_single_status"
-                android:textColor="@android:color/white"
+                android:textColor="@android:color/black"
                 android:textSize="14sp" />
+
         </LinearLayout>
 
     </LinearLayout>
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gri" />
 
 </LinearLayout>

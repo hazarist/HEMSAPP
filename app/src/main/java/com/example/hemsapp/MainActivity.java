@@ -10,12 +10,14 @@ import android.view.MenuItem;
 import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-
+    private DatabaseReference userDatabaseReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
         mToolbar = findViewById(R.id.appBarLayout);
         setSupportActionBar(mToolbar);
 
+        if(mAuth.getCurrentUser() != null) {
+            userDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
+        }
         //Tabs
         vPager = findViewById(R.id.viewPager);
         sectionPageAdapter = new SectionPageAdapter(getSupportFragmentManager());
@@ -46,12 +51,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if(currentUser == null){
             startActivityLogin();
-            Toast.makeText(getApplicationContext(),"Please Login.",Toast.LENGTH_SHORT).show();
+        }else{
+            userDatabaseReference.child("online").setValue(true);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null){
+            userDatabaseReference.child("online").setValue(false);
         }
     }
 
@@ -59,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.main_menu,menu);
-
 
         return  true;
     }
@@ -79,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if(item.getItemId() == R.id.btnAllUsers){
-
             Intent usersIntent = new Intent(MainActivity.this, UsersActivity.class);
             startActivity(usersIntent);
         }
