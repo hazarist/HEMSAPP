@@ -2,15 +2,19 @@ package com.example.hemsapp;
 
 import android.app.Application;
 import android.support.annotation.NonNull;
+import android.widget.TimePicker;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
+
+import java.util.Calendar;
 
 public class HEMSAPP extends Application {
 
@@ -37,7 +41,9 @@ public class HEMSAPP extends Application {
             userDatabase.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Calendar calendar = Calendar.getInstance();
                     userDatabase.child("online").onDisconnect().setValue(false);
+                    userDatabase.child("lastSeen").setValue(calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE) + " " + calendar.get(Calendar.MONTH) + "." + calendar.get(Calendar.DAY_OF_MONTH) + "." + calendar.get(Calendar.YEAR));
                 }
 
                 @Override

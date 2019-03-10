@@ -24,6 +24,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
@@ -74,10 +75,12 @@ public class FrendsFragment extends Fragment {
 
         FirebaseRecyclerAdapter<User, FriendsViewHolder> firebaseRecyclerAdapter;
 
+        Query query = mUsersDatabase
+                .orderByChild("online").equalTo(true);
+
         FirebaseRecyclerOptions<User> options=
                 new FirebaseRecyclerOptions.Builder<User>()
-                        .setQuery(mUsersDatabase
-                                .orderByChild("online").equalTo(true),User.class)
+                        .setQuery(query,User.class)
                         .setLifecycleOwner(this)
                         .build();
 
@@ -86,10 +89,10 @@ public class FrendsFragment extends Fragment {
             @NonNull
             @Override
             public FriendsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.users_single_layout, parent, false);
+                    View view = LayoutInflater.from(parent.getContext())
+                            .inflate(R.layout.users_single_layout, parent, false);
 
-                return new FriendsViewHolder(view);
+                    return new FriendsViewHolder(view);
             }
 
             @Override
@@ -101,7 +104,6 @@ public class FrendsFragment extends Fragment {
                     holder.setStatus(user.getStatus());
                     holder.setUserImage(user.getThumbImage());
                     holder.setUserOnline(user.getOnline().toString());
-
 
                     holder.mView.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -115,9 +117,18 @@ public class FrendsFragment extends Fragment {
                             builder.setItems(options, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    Intent intentProfile = new Intent(getContext(), ProfileActivity.class);
-                                    intentProfile.putExtra("userID", userID);
-                                    startActivity(intentProfile);
+
+                                    if(i == 0) {
+                                        Intent intentProfile = new Intent(getContext(), ProfileActivity.class);
+                                        intentProfile.putExtra("userID", userID);
+                                        startActivity(intentProfile);
+                                    }
+
+                                    if(i == 1){
+                                        Intent intentChat = new Intent(getContext(), ChatActivity.class);
+                                        intentChat.putExtra("userID", userID);
+                                        startActivity(intentChat);
+                                    }
                                 }
                             });
 

@@ -14,6 +14,7 @@ public class User {
     private String gender;
     private String deviceToken;
     private Boolean online;
+    private String lastSeen;
 
     public User(String name, String surname, String email, String position, String status, String image, String thumbImage, String deviceToken) {
         this.Name = name;
@@ -25,14 +26,6 @@ public class User {
         this.thumbImage = thumbImage;
         this.deviceToken = deviceToken;
 ;    }
-
-    public User(String name,String surname, String image, String thumbImage,Boolean online) {
-        this.Name = name;
-        this.Surname = surname;
-        this.image = image;
-        this.thumbImage = thumbImage;
-        this.online = online;
-    }
 
     public User() {} // Firebase Required
 
@@ -130,6 +123,14 @@ public class User {
 
     public void setOnline(Boolean online) {
         this.online = online;
+    }
+
+    public String getLastSeen() {
+        return lastSeen;
+    }
+
+    public void setLastSeen(String lastSeen) {
+        this.lastSeen = lastSeen;
     }
 
     public String getFullName(){
