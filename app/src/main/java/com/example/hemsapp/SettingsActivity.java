@@ -77,8 +77,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 tvStatus.setText(currentUser.getStatus());
 
                 if (!currentUser.getImage().equals("default")) {
-//                    Picasso.get().load(currentUser.getImage()).placeholder(R.mipmap.profile).into(ivProfile);
-
                 Picasso.get().load(currentUser.getImage()).networkPolicy(NetworkPolicy.OFFLINE).placeholder(R.mipmap.profile).into(ivProfile, new Callback() {
                     @Override
                     public void onSuccess() {

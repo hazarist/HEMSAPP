@@ -68,15 +68,15 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-            Calendar calendar = Calendar.getInstance();
             userDatabaseReference.child("online").setValue(false);
-            userDatabaseReference.child("lastSeen").setValue(calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE) + " " + calendar.get(Calendar.MONTH) + "." + calendar.get(Calendar.DAY_OF_MONTH) + "." + calendar.get(Calendar.YEAR));
+            userDatabaseReference.child("lastSeen").setValue(ServerValue.TIMESTAMP);
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
+
         getMenuInflater().inflate(R.menu.main_menu,menu);
 
         return  true;

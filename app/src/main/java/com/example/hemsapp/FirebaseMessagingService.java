@@ -11,20 +11,21 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        String notificationTitle = remoteMessage.getNotification().getTitle();
-        String notificationMessage = remoteMessage.getNotification().getBody();
+        if(remoteMessage != null && remoteMessage.getNotification() != null) {
+            String notificationTitle = remoteMessage.getNotification().getTitle();
+            String notificationMessage = remoteMessage.getNotification().getBody();
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(notificationTitle)
-                .setContentText(notificationMessage);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle(notificationTitle)
+                    .setContentText(notificationMessage);
 
-        int notificationId = (int) System.currentTimeMillis();
+            int notificationId = (int) System.currentTimeMillis();
 
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 
 // notificationId is a unique int for each notification that you must define
-        notificationManager.notify(notificationId, builder.build());
-
+            notificationManager.notify(notificationId, builder.build());
+        }
     }
 }

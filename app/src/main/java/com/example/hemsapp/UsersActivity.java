@@ -90,7 +90,6 @@ public class UsersActivity extends AppCompatActivity {
             }
         };
 
-        firebaseRecyclerAdapter.startListening();
         rvUserList.setAdapter(firebaseRecyclerAdapter);
     }
 

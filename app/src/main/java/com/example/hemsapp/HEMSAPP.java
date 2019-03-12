@@ -41,9 +41,8 @@ public class HEMSAPP extends Application {
             userDatabase.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Calendar calendar = Calendar.getInstance();
                     userDatabase.child("online").onDisconnect().setValue(false);
-                    userDatabase.child("lastSeen").setValue(calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE) + " " + calendar.get(Calendar.MONTH) + "." + calendar.get(Calendar.DAY_OF_MONTH) + "." + calendar.get(Calendar.YEAR));
+                    userDatabase.child("lastSeen").setValue(ServerValue.TIMESTAMP);
                 }
 
                 @Override

@@ -128,11 +128,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-                    String uid = currentUser.getUid();
+                    if (currentUser != null) {
 
-                    firebaseDatabase = FirebaseDatabase.getInstance();
+                        String uid = currentUser.getUid();
 
-                    databaseReference = firebaseDatabase.getReference().child("Users").child(uid);
+                        firebaseDatabase = FirebaseDatabase.getInstance();
+
+                        databaseReference = firebaseDatabase.getReference().child("Users").child(uid);
+                    }
 
                     User newUSer = new User(name,surName,email,position,status,image,thumbImage,deviceToken);
 

@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +29,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.Map;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
@@ -43,6 +46,8 @@ public class FrendsFragment extends Fragment {
     private FirebaseAuth mAuth;
 
     private View mMainView;
+
+    private boolean currentUserflag;
 
     public FrendsFragment() {
         // Required empty public constructor
@@ -73,33 +78,43 @@ public class FrendsFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        FirebaseRecyclerAdapter<User, FriendsViewHolder> firebaseRecyclerAdapter;
+       final FirebaseRecyclerAdapter<User, FriendsViewHolder> firebaseRecyclerAdapter;
 
-        Query query = mUsersDatabase
-                .orderByChild("online").equalTo(true);
-
-        FirebaseRecyclerOptions<User> options=
+       final FirebaseRecyclerOptions<User> options=
                 new FirebaseRecyclerOptions.Builder<User>()
-                        .setQuery(query,User.class)
+                        .setQuery(mUsersDatabase,User.class)
                         .setLifecycleOwner(this)
                         .build();
 
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(options) {
 
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(options) {
+       //     int counter = 0;
             @NonNull
             @Override
             public FriendsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+          //      User user = options.getSnapshots().getSnapshot(counter).getValue(User.class);
+          //      counter++;
+           //     if(!user.getEmail().equals(mAuth.getCurrentUser().getEmail())) {
                     View view = LayoutInflater.from(parent.getContext())
                             .inflate(R.layout.users_single_layout, parent, false);
 
                     return new FriendsViewHolder(view);
-            }
+                }
+
+           //     return null;
+          //  }
 
             @Override
-            protected void onBindViewHolder(@NonNull final FriendsViewHolder holder, int position, @NonNull User user) {
+            protected void onBindViewHolder(@Nullable final FriendsViewHolder holder, int position, @NonNull User user) {
+
+//                if (user.getEmail().equals(mAuth.getCurrentUser().getEmail())) {
+//                    currentUserflag = true;
+//                }else{
+//                    currentUserflag = false;
 
                 final String userID = getRef(position).getKey();
-
+                if (holder != null) {
                     holder.setName(user.getFullName());
                     holder.setStatus(user.getStatus());
                     holder.setUserImage(user.getThumbImage());
@@ -118,13 +133,13 @@ public class FrendsFragment extends Fragment {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
 
-                                    if(i == 0) {
+                                    if (i == 0) {
                                         Intent intentProfile = new Intent(getContext(), ProfileActivity.class);
                                         intentProfile.putExtra("userID", userID);
                                         startActivity(intentProfile);
                                     }
 
-                                    if(i == 1){
+                                    if (i == 1) {
                                         Intent intentChat = new Intent(getContext(), ChatActivity.class);
                                         intentChat.putExtra("userID", userID);
                                         startActivity(intentChat);
@@ -136,11 +151,16 @@ public class FrendsFragment extends Fragment {
 
                         }
                     });
+                }
+                //  }
             }
         };
 
-        firebaseRecyclerAdapter.startListening();
-        mFriendsList.setAdapter(firebaseRecyclerAdapter);
+
+       // if (!currentUserflag) {
+            firebaseRecyclerAdapter.startListening();
+            mFriendsList.setAdapter(firebaseRecyclerAdapter);
+       // }
     }
 
 
@@ -152,7 +172,6 @@ public class FrendsFragment extends Fragment {
             super(itemView);
 
             mView = itemView;
-
         }
 
         public void setName(String name){

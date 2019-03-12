@@ -14,7 +14,7 @@ public class User {
     private String gender;
     private String deviceToken;
     private Boolean online;
-    private String lastSeen;
+    private long lastSeen;
 
     public User(String name, String surname, String email, String position, String status, String image, String thumbImage, String deviceToken) {
         this.Name = name;
@@ -125,11 +125,11 @@ public class User {
         this.online = online;
     }
 
-    public String getLastSeen() {
+    public long getLastSeen() {
         return lastSeen;
     }
 
-    public void setLastSeen(String lastSeen) {
+    public void setLastSeen(long lastSeen) {
         this.lastSeen = lastSeen;
     }
 
