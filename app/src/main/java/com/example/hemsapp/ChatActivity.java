@@ -3,6 +3,7 @@ package com.example.hemsapp;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
@@ -47,11 +49,16 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     DatabaseReference rootRef;
 
     private RecyclerView mMessagesList;
-    private final List<Messages> messagesList = new ArrayList<>();
+    private List<Messages> messagesList = new ArrayList<>();
     LinearLayoutManager linearLayoutManager;
     private MessageAdapter messageAdapter;
+    private SwipeRefreshLayout refreshLayout;
 
-    private DatabaseReference messageDatabase;
+    private static final int TOTAL_ITEMS_TO_LOAD = 10;
+    private int mCurrentPage = 1;
+    private int itemPos = 0;
+    private String mLastKey;
+    private String mPrevKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,12 +88,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             actionBar.setCustomView(actionBarView);
         }
 
-        final TextView tvFullName = findViewById(R.id.tvChatUserName);
-        final TextView tvLastSeen = findViewById(R.id.tvChatLastSeen);
-        final CircleImageView ivChatUserImage = findViewById(R.id.imChatUserImage);
+
         btnChatAdd = findViewById(R.id.btnChatAdd);
         btnChatSend = findViewById(R.id.btnChatSend);
         etChatMessage = findViewById(R.id.etChatMessage);
+
+        refreshLayout = findViewById(R.id.messageSwipeLayout);
 
         messageAdapter = new MessageAdapter(messagesList);
 
@@ -97,13 +104,27 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         mMessagesList.setLayoutManager(linearLayoutManager);
         mMessagesList.setAdapter(messageAdapter);
 
+
         loadMessages();
 
         btnChatSend.setOnClickListener(this);
 
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mCurrentPage++;
+                itemPos = 0;
+                loadMoreMessages();
+            }
+        });
+
+
         rootRef.child("Users").child(chatUser).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                TextView tvFullName = findViewById(R.id.tvChatUserName);
+                TextView tvLastSeen = findViewById(R.id.tvChatLastSeen);
+                CircleImageView ivChatUserImage = findViewById(R.id.imChatUserImage);
 
                 User user = dataSnapshot.getValue(User.class);
 
@@ -116,11 +137,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         tvLastSeen.setText(R.string.rs_online);
                     } else {
 
-                        GetTimeAgo getTimeAgo = new GetTimeAgo();
+                        GetTimeAgo timeAgo = new GetTimeAgo();
 
                         long lastTime =  user.getLastSeen();
 
-                        String lastSeenTime = getTimeAgo.getTimeAgo(lastTime,getApplicationContext());
+                        String lastSeenTime = timeAgo.getTimeAgo(lastTime,getApplicationContext());
 
                         tvLastSeen.setText(lastSeenTime);
                     }
@@ -172,14 +193,81 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void loadMessages() {
-        rootRef.child("messages").child(currentUserID).child(chatUser).addChildEventListener(new ChildEventListener() {
+    private void loadMoreMessages(){
+        DatabaseReference messageRef = rootRef.child("messages").child(currentUserID).child(chatUser);
+        Query messageQuery = messageRef.orderByKey().endAt(mLastKey).limitToLast(TOTAL_ITEMS_TO_LOAD);
+
+        messageQuery.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Messages messages = dataSnapshot.getValue(Messages.class);
 
+                String messageKey = dataSnapshot.getKey();
+
+                if(!mPrevKey.equals(messageKey)){
+                    messagesList.add(itemPos++,messages);
+                }else {
+                    mPrevKey = mLastKey;
+                }
+
+                if(itemPos == 1){
+                    mLastKey = messageKey;
+                }
+
+
+                messageAdapter.notifyDataSetChanged();
+
+                refreshLayout.setRefreshing(false);
+
+                linearLayoutManager.scrollToPositionWithOffset(TOTAL_ITEMS_TO_LOAD,0);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void loadMessages() {
+
+        DatabaseReference messageRef = rootRef.child("messages").child(currentUserID).child(chatUser);
+        Query messageQuery = messageRef.limitToLast(mCurrentPage * TOTAL_ITEMS_TO_LOAD);
+
+        messageQuery.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Messages messages = dataSnapshot.getValue(Messages.class);
+
+                itemPos++;
+                if(itemPos == 1){
+                    String messageKey = dataSnapshot.getKey();
+                    mLastKey = messageKey;
+                    mPrevKey = messageKey;
+                }
+
                 messagesList.add(messages);
                 messageAdapter.notifyDataSetChanged();
+
+                mMessagesList.scrollToPosition(messagesList.size()-1);
+
+                refreshLayout.setRefreshing(false);
             }
 
             @Override
@@ -213,6 +301,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+
+
     private void sendMessage(){
         String message = etChatMessage.getText().toString();
 
@@ -235,6 +325,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             messageUserMap.put(currentUserRef +"/"+pushID,messageMap);
             messageUserMap.put(chatUserRef+"/"+pushID,messageMap);
 
+            etChatMessage.setText("");
+
             rootRef.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
@@ -245,6 +337,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             });
 
         }
-        etChatMessage.setText("");
+
     }
 }
