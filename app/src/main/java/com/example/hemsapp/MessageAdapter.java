@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,17 +49,18 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         TextView messageText;
         CircleImageView profileImage;
-       // TextView displayName;
-      //  ImageView messageImage;
+        TextView displayName;
+        ImageView messageImage;
+        TextView tvTime;
 
         public MessageViewHolder(View view) {
             super(view);
 
             messageText =  view.findViewById(R.id.tvMessageText);
             profileImage =  view.findViewById(R.id.messageProfileIcon);
-    //        displayName =  view.findViewById(R.id.name_text_layout);
-      //      messageImage =  view.findViewById(R.id.message_image_layout);
-
+            displayName =  view.findViewById(R.id.name_text_layout);
+            messageImage =  view.findViewById(R.id.message_image_layout);
+            tvTime = view.findViewById(R.id.time_text_layout);
         }
     }
 
@@ -70,16 +72,24 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         Messages c = mMessageList.get(i);
 
         String fromUser = c.getFrom();
+        String message_type = c.getType();
 
-         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child(fromUser);
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child(fromUser);
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(mAuth != null && mAuth.getCurrentUser() != null) {
+                User user = dataSnapshot.getValue(User.class);
 
-                    Picasso.get().load(dataSnapshot.child("thumbImage").getValue().toString())
-                            .placeholder(R.mipmap.profile).into(viewHolder.profileImage);
+//                GetTimeAgo timeAgo = new GetTimeAgo();
+//                long lastTime =  user.getLastSeen();
+//                String lastSeenTime = timeAgo.getTimeAgo(lastTime,getApplicationContext());
+
+                if(user != null&& mAuth != null && mAuth.getCurrentUser() != null) {
+                    viewHolder.displayName.setText(user.getFullName());
+
+                        Picasso.get().load(user.getThumbImage())
+                                .placeholder(R.mipmap.profile).into(viewHolder.profileImage);
 
                 }
             }
@@ -91,19 +101,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         });
 
 
-
-        if(mAuth != null && mAuth.getCurrentUser() != null) {
-            String currentUserID = mAuth.getCurrentUser().getUid();
-
-            if (fromUser.equals(currentUserID)) {
-                viewHolder.messageText.setBackgroundColor(Color.WHITE);
-                viewHolder.messageText.setTextColor(Color.BLACK);
-            } else {
-                viewHolder.messageText.setBackgroundResource(R.drawable.message_text_background);
-                viewHolder.messageText.setTextColor(Color.WHITE);
-            }
+        if(message_type.equals("text")) {
 
             viewHolder.messageText.setText(c.getMessage());
+            viewHolder.messageImage.setVisibility(View.INVISIBLE);
+
+
+        } else {
+            viewHolder.messageText.setVisibility(View.INVISIBLE);
+            Picasso.get().load(c.getMessage())
+                    .placeholder(R.mipmap.app_logo).into(viewHolder.messageImage);
         }
     }
 

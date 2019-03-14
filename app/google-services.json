@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "805479187516-1uqo926slriu2e36dk0taj5n90i85lqn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.hemsapp",
+            "certificate_hash": "dbe9299339159b5effcec117fed88dc3d7262a37"
+          }
+        },
+        {
           "client_id": "805479187516-16kamav1i44crf3s6r7l06mf2fgcomu2.apps.googleusercontent.com",
           "client_type": 3
         }

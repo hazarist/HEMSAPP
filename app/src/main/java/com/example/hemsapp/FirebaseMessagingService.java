@@ -1,5 +1,6 @@
 package com.example.hemsapp;
 
+import android.app.PendingIntent;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
@@ -27,5 +28,6 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 // notificationId is a unique int for each notification that you must define
             notificationManager.notify(notificationId, builder.build());
         }
+
     }
 }
