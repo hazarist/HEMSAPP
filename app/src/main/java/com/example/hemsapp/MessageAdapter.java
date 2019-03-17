@@ -1,6 +1,5 @@
 package com.example.hemsapp;
 
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,13 +22,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
 
+
     private List<Messages> mMessageList;
-    private FirebaseAuth mAuth;
+    private DatabaseReference databaseReference;
 
     public MessageAdapter(List<Messages> mMessageList) {
 
         this.mMessageList = mMessageList;
-
 
     }
 
@@ -47,11 +45,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     public class MessageViewHolder extends RecyclerView.ViewHolder {
 
-        TextView messageText;
-        CircleImageView profileImage;
-        TextView displayName;
-        ImageView messageImage;
-        TextView tvTime;
+        private TextView messageText;
+        private CircleImageView profileImage;
+        private TextView displayName;
+        private ImageView messageImage;
+        private TextView tvTime;
 
         public MessageViewHolder(View view) {
             super(view);
@@ -67,14 +65,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     @Override
     public void onBindViewHolder(@NonNull final MessageViewHolder viewHolder, int i) {
 
-        mAuth = FirebaseAuth.getInstance();
+        final Messages c = mMessageList.get(i);
 
-        Messages c = mMessageList.get(i);
+        final String fromUser = c.getFrom();
+        final String message_type = c.getType();
 
-        String fromUser = c.getFrom();
-        String message_type = c.getType();
-
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child(fromUser);
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child(fromUser);
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -85,12 +81,23 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 //                long lastTime =  user.getLastSeen();
 //                String lastSeenTime = timeAgo.getTimeAgo(lastTime,getApplicationContext());
 
-                if(user != null&& mAuth != null && mAuth.getCurrentUser() != null) {
+                if(user != null) {
                     viewHolder.displayName.setText(user.getFullName());
 
                         Picasso.get().load(user.getThumbImage())
                                 .placeholder(R.mipmap.profile).into(viewHolder.profileImage);
 
+                }
+
+
+                if(message_type.equals("text")) {
+                    viewHolder.messageText.setText(c.getMessage());
+                    viewHolder.messageImage.setVisibility(View.INVISIBLE);
+
+                } else {
+                    viewHolder.messageText.setVisibility(View.INVISIBLE);
+                    Picasso.get().load(c.getMessage())
+                            .placeholder(R.mipmap.app_logo).into(viewHolder.messageImage);
                 }
             }
 
@@ -101,17 +108,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         });
 
 
-        if(message_type.equals("text")) {
-
-            viewHolder.messageText.setText(c.getMessage());
-            viewHolder.messageImage.setVisibility(View.INVISIBLE);
-
-
-        } else {
-            viewHolder.messageText.setVisibility(View.INVISIBLE);
-            Picasso.get().load(c.getMessage())
-                    .placeholder(R.mipmap.app_logo).into(viewHolder.messageImage);
-        }
     }
 
     @Override

@@ -51,6 +51,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private FirebaseAuth mAuth;
     private String currentUserID;
 
+    TextView tvFullName;
+    TextView tvLastSeen;
+    CircleImageView ivChatUserImage;
+
     private ImageButton btnChatAdd;
     private ImageButton btnChatSend;
     private EditText etChatMessage;
@@ -80,6 +84,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         Toolbar chatToolbar;
         chatUser = getIntent().getStringExtra("userID");
+        String userName = getIntent().getStringExtra("userName");
 
         chatToolbar = findViewById(R.id.chatAppBar);
         setSupportActionBar(chatToolbar);
@@ -92,6 +97,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         if(mAuth != null && mAuth.getCurrentUser() != null)
         currentUserID = mAuth.getCurrentUser().getUid();
 
+
+
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View actionBarView = inflater.inflate(R.layout.chat_custom_bar, null);
 
@@ -101,11 +108,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             actionBar.setCustomView(actionBarView);
         }
 
+        tvFullName = findViewById(R.id.tvChatUserName);
+        tvLastSeen = findViewById(R.id.tvChatLastSeen);
+        ivChatUserImage = findViewById(R.id.imChatUserImage);
 
         btnChatAdd = findViewById(R.id.btnChatAdd);
         btnChatSend = findViewById(R.id.btnChatSend);
         etChatMessage = findViewById(R.id.etChatMessage);
-
         refreshLayout = findViewById(R.id.messageSwipeLayout);
 
         messageAdapter = new MessageAdapter(messagesList);
@@ -132,13 +141,18 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        mImageStorage = FirebaseStorage.getInstance().getReference();
+
+        rootRef.child("Chat").child(currentUserID).child(chatUser).child("seen").setValue(true);
+
+        loadMessages();
+
+        tvFullName.setText(userName);
 
         rootRef.child("Users").child(chatUser).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                TextView tvFullName = findViewById(R.id.tvChatUserName);
-                TextView tvLastSeen = findViewById(R.id.tvChatLastSeen);
-                CircleImageView ivChatUserImage = findViewById(R.id.imChatUserImage);
+
 
                 User user = dataSnapshot.getValue(User.class);
 
@@ -355,7 +369,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             rootRef.child("Chat").child(chatUser).child(currentUserID).child("seen").setValue(false);
             rootRef.child("Chat").child(chatUser).child(currentUserID).child("timestamp").setValue(ServerValue.TIMESTAMP);
 
-
             rootRef.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
@@ -373,7 +386,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == GALLERY_PICK && resultCode == RESULT_OK){
+        if(data != null && requestCode == GALLERY_PICK && resultCode == RESULT_OK){
 
             Uri imageUri = data.getData();
 
@@ -388,6 +401,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
             StorageReference filepath = mImageStorage.child("message_images").child( push_id + ".jpg");
 
+            if(imageUri !=null)
             filepath.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {

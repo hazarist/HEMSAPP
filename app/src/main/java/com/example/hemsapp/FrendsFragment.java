@@ -115,7 +115,8 @@ public class FrendsFragment extends Fragment {
 
                 final String userID = getRef(position).getKey();
                 if (holder != null) {
-                    holder.setName(user.getFullName());
+                    final String userName = user.getFullName();
+                    holder.setName(userName);
                     holder.setStatus(user.getStatus());
                     holder.setUserImage(user.getThumbImage());
                     holder.setUserOnline(user.getOnline().toString());
@@ -142,6 +143,7 @@ public class FrendsFragment extends Fragment {
                                     if (i == 1) {
                                         Intent intentChat = new Intent(getContext(), ChatActivity.class);
                                         intentChat.putExtra("userID", userID);
+                                        intentChat.putExtra("userName",userName);
                                         startActivity(intentChat);
                                     }
                                 }
