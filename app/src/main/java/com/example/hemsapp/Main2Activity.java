@@ -1,38 +1,33 @@
 package com.example.hemsapp;
+
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.Calendar;
-
-
-public class MainActivity extends AppCompatActivity {
+public class Main2Activity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private DatabaseReference userDatabaseReference;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main2);
 
         Toolbar mToolbar;
         ViewPager vPager;
-        SectionPageAdapter sectionPageAdapter;
+        SectionPageAdapterManager sectionPageAdapter;
         TabLayout tabLayout;
 
         mAuth = FirebaseAuth.getInstance();
@@ -45,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         }
         //Tabs
         vPager = findViewById(R.id.viewPager);
-        sectionPageAdapter = new SectionPageAdapter(getSupportFragmentManager());
+        sectionPageAdapter = new SectionPageAdapterManager(getSupportFragmentManager());
 
         vPager.setAdapter(sectionPageAdapter);
 
@@ -58,7 +53,13 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
+        FirebaseUser currentUser = mAuth.getCurrentUser();
 
+        if(currentUser == null){
+            startActivityLogin();
+        }else{
+            userDatabaseReference.child("online").setValue(true);
+        }
     }
 
     @Override
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
 
-        getMenuInflater().inflate(R.menu.main_menu2,menu);
+        getMenuInflater().inflate(R.menu.main_menu,menu);
 
         return  true;
     }
@@ -90,15 +91,25 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if(item.getItemId() == R.id.btnSettings){
-            Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+            Intent settingsIntent = new Intent(Main2Activity.this,SettingsActivity.class);
             startActivity(settingsIntent);
+        }
+
+        if(item.getItemId() == R.id.btnAddTask){
+            Intent newTaskIntent = new Intent(Main2Activity.this,NewTaskActivity.class);
+            startActivity(newTaskIntent);
+        }
+
+        if(item.getItemId() == R.id.btnAllUsers){
+            Intent usersIntent = new Intent(Main2Activity.this,UsersActivity.class);
+            startActivity(usersIntent);
         }
 
         return true;
     }
 
     private void startActivityLogin(){
-        Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+        Intent loginIntent = new Intent(Main2Activity.this, LoginActivity.class);
         startActivity(loginIntent);
         finish();
     }

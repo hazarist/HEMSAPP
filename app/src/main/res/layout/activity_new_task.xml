@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="100px"
+    android:gravity="center|center_horizontal|center_vertical"
+    android:orientation="vertical"
+    tools:context=".NewTaskActivity">
+
+    <TextView
+        android:id="@+id/tvTaskName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Task Name" />
+
+    <EditText
+        android:id="@+id/etTaskName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/tvDefinition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Definition" />
+
+    <EditText
+        android:id="@+id/etDefinition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/tvType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Type" />
+
+    <EditText
+        android:id="@+id/etType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/tvRoomNum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Room Number" />
+
+    <EditText
+        android:id="@+id/etRoomNum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <Button
+        android:id="@+id/btnAddNewTask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ADD TASK" />
+</LinearLayout>

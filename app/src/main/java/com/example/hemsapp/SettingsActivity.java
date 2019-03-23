@@ -224,7 +224,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     Toast.makeText(getApplicationContext(),"Error! " + error,Toast.LENGTH_SHORT).show();
                 }
 
-
             }
 
     }

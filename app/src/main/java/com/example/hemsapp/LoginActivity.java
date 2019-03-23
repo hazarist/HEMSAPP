@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,31 +36,60 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Button btnLogin;
     private TextView tvCreateAccount;
 
-    FirebaseAuth mAuth;
-
-    DatabaseReference databaseReference;
+    private FirebaseAuth mAuth;
+    private DatabaseReference databaseReference;
 
     ProgressDialog progressDialog;
-
-
+    public static User staticUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
-
         mAuth = FirebaseAuth.getInstance();
+        if(mAuth.getCurrentUser() != null) {
+            databaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
+        }
 
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
         tvCreateAccount = findViewById(R.id.tvNeedAccount);
 
-
-
         tvCreateAccount.setOnClickListener(this);
         btnLogin.setOnClickListener(this);
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null){
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    staticUser = dataSnapshot.getValue(User.class);
+
+                    if(staticUser != null && staticUser.getPosition().equals(UserRole.Employee.toString())){
+                        databaseReference.child("online").setValue(true);
+                        Intent mainActivity = new Intent(LoginActivity.this,MainActivity.class);
+                        startActivity(mainActivity);
+                        finish();
+                    }else if(staticUser != null && staticUser.getPosition().equals(UserRole.Manager.toString())){
+                        databaseReference.child("online").setValue(true);
+                        Intent main2activity = new Intent(LoginActivity.this,Main2Activity.class);
+                        startActivity(main2activity);
+                        finish();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
     @Override
@@ -88,19 +118,35 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful() && mAuth != null && mAuth.getCurrentUser() != null) {
 
-                                            String currentUserID = mAuth.getCurrentUser().getUid();
-                                            String deviceToken = FirebaseInstanceId.getInstance().getToken();
-                                            databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
+                                    final String currentUserID = mAuth.getCurrentUser().getUid();
+                                    String deviceToken = FirebaseInstanceId.getInstance().getToken();
+                                    databaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
 
-                                    databaseReference.child(currentUserID).child("deviceToken").setValue(deviceToken).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    databaseReference.child("deviceToken").setValue(deviceToken).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
+                                                    databaseReference.addValueEventListener(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                            staticUser = dataSnapshot.getValue(User.class);
+                                                            String position = staticUser.getPosition();
+                                                            if(position.equals(UserRole.Employee.toString())) {
+                                                                Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                                                                startActivity(mainIntent);
+                                                                finish();
+                                                            }else if(position.equals(UserRole.Manager.toString())){
+                                                                Intent main2Intent = new Intent(LoginActivity.this, Main2Activity.class);
+                                                                startActivity(main2Intent);
+                                                                finish();
+                                                            }
+                                                        }
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                                        Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                                                        startActivity(mainIntent);
-                                                        finish();
-                                                        Toast.makeText(getApplicationContext(), "Login process is successful.", Toast.LENGTH_SHORT).show();
-                                                        progressDialog.dismiss();
+                                                        }
+                                                    });
+                                                    Toast.makeText(getApplicationContext(), "Login process is successful.", Toast.LENGTH_SHORT).show();
+                                                    progressDialog.dismiss();
                                                 }
                                             });
 

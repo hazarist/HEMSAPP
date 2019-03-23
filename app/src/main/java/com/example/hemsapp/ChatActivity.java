@@ -126,20 +126,17 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         mMessagesList.setLayoutManager(linearLayoutManager);
         mMessagesList.setAdapter(messageAdapter);
 
-
-        loadMessages();
-
         btnChatSend.setOnClickListener(this);
         btnChatAdd.setOnClickListener(this);
 
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mCurrentPage++;
-                itemPos = 0;
-                loadMoreMessages();
-            }
-        });
+//        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                mCurrentPage++;
+//                itemPos = 0;
+//                loadMessages();
+//            }
+//        });
 
         mImageStorage = FirebaseStorage.getInstance().getReference();
 
@@ -242,7 +239,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     mLastKey = messageKey;
                 }
 
-
                 messageAdapter.notifyDataSetChanged();
 
                 refreshLayout.setRefreshing(false);
@@ -283,12 +279,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Messages messages = dataSnapshot.getValue(Messages.class);
 
-                itemPos++;
-                if(itemPos == 1){
-                    String messageKey = dataSnapshot.getKey();
-                    mLastKey = messageKey;
-                    mPrevKey = messageKey;
-                }
+//                itemPos++;
+//                if(itemPos == 1){
+//                    String messageKey = dataSnapshot.getKey();
+//                    mLastKey = messageKey;
+//                    mPrevKey = messageKey;
+//                }
 
                 messagesList.add(messages);
                 messageAdapter.notifyDataSetChanged();

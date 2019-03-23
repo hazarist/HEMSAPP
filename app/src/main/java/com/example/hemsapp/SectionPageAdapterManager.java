@@ -4,10 +4,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-public class SectionPageAdapter extends FragmentPagerAdapter {
+public class SectionPageAdapterManager extends FragmentPagerAdapter {
 
-
-    public SectionPageAdapter(FragmentManager fm) {
+    public SectionPageAdapterManager (FragmentManager fm) {
         super(fm);
     }
 

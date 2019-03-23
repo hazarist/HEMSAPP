@@ -37,7 +37,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FrendsFragment extends Fragment {
+public class FriendsFragment extends Fragment {
+
+    private FirebaseRecyclerAdapter<User, FriendsViewHolder> firebaseRecyclerAdapter;
 
     private RecyclerView mFriendsList;
 
@@ -49,7 +51,7 @@ public class FrendsFragment extends Fragment {
 
     private boolean currentUserflag;
 
-    public FrendsFragment() {
+    public FriendsFragment() {
         // Required empty public constructor
     }
 
@@ -78,9 +80,7 @@ public class FrendsFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-       final FirebaseRecyclerAdapter<User, FriendsViewHolder> firebaseRecyclerAdapter;
-
-       final FirebaseRecyclerOptions<User> options=
+       FirebaseRecyclerOptions<User> options=
                 new FirebaseRecyclerOptions.Builder<User>()
                         .setQuery(mUsersDatabase,User.class)
                         .setLifecycleOwner(this)
@@ -160,11 +160,22 @@ public class FrendsFragment extends Fragment {
 
 
        // if (!currentUserflag) {
-            firebaseRecyclerAdapter.startListening();
-            mFriendsList.setAdapter(firebaseRecyclerAdapter);
+        mFriendsList.setAdapter(firebaseRecyclerAdapter);
+        firebaseRecyclerAdapter.startListening();
        // }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        firebaseRecyclerAdapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        firebaseRecyclerAdapter.stopListening();
+    }
 
     public static class FriendsViewHolder extends RecyclerView.ViewHolder {
 

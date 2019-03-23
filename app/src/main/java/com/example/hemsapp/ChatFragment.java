@@ -36,7 +36,7 @@
  public class ChatFragment extends Fragment {
 
      private RecyclerView mConvList;
-
+     private FirebaseRecyclerAdapter<Conv, ConvViewHolder> firebaseRecyclerAdapter;
      private DatabaseReference mConvDatabase;
      private DatabaseReference mMessageDatabase;
      private DatabaseReference mUsersDatabase;
@@ -90,7 +90,7 @@
          super.onStart();
 
          Query query = mConvDatabase.orderByChild("timestamp");
-         final FirebaseRecyclerAdapter<Conv, ConvViewHolder> firebaseRecyclerAdapter;
+
 
          final FirebaseRecyclerOptions<Conv> options=
                  new FirebaseRecyclerOptions.Builder<Conv>()
@@ -144,24 +144,24 @@
 
                              final User user = dataSnapshot.getValue(User.class);
 
-                             convViewHolder.setUserOnline(user.getOnline().toString());
-                             convViewHolder.setName(user.getFullName());
-                             convViewHolder.setUserImage(user.getThumbImage());
+                             if(user != null) {
+                                 convViewHolder.setUserOnline(user.getOnline().toString());
+                                 convViewHolder.setName(user.getFullName());
+                                 convViewHolder.setUserImage(user.getThumbImage());
 
-                             convViewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                                 @Override
-                                 public void onClick(View view) {
+                                 convViewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                                     @Override
+                                     public void onClick(View view) {
 
+                                         Intent chatIntent = new Intent(getContext(), ChatActivity.class);
+                                         chatIntent.putExtra("userID", list_user_id);
+                                         chatIntent.putExtra("userName", user.getFullName());
+                                         startActivity(chatIntent);
 
-                                     Intent chatIntent = new Intent(getContext(), ChatActivity.class);
-                                     chatIntent.putExtra("userID", list_user_id);
-                                     chatIntent.putExtra("userName", user.getFullName());
-                                     startActivity(chatIntent);
+                                     }
 
-                                 }
-                             });
-
-
+                                 });
+                             }
                          }
 
                          @Override
@@ -182,9 +182,20 @@
              }
          };
 
-         firebaseRecyclerAdapter.startListening();
          mConvList.setAdapter(firebaseRecyclerAdapter);
+         firebaseRecyclerAdapter.startListening();
+     }
 
+     @Override
+     public void onStop() {
+         super.onStop();
+         firebaseRecyclerAdapter.stopListening();
+     }
+
+     @Override
+     public void onResume() {
+         super.onResume();
+         firebaseRecyclerAdapter.startListening();
      }
 
      public static class ConvViewHolder extends RecyclerView.ViewHolder {

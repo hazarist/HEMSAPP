@@ -34,4 +34,7 @@
     <string name="user_password2">Please Enter Your Password Again.</string>
     <string name="rs_write_message">Enter message..</string>
     <string name="rs_online">Online</string>
+    <string name="btnAddTask">Add New Task</string>
+    <string name="rs_task_single_name">Task Name</string>
+    <string name="rs_task_single_who">Who</string>
 </resources>
