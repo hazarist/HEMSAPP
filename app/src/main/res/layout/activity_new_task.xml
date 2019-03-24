@@ -65,5 +65,7 @@
         android:id="@+id/btnAddNewTask"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ADD TASK" />
+        android:background="@color/colorPrimaryDark"
+        android:text="ADD TASK"
+        android:textColor="@android:color/white" />
 </LinearLayout>

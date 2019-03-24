@@ -1,11 +1,11 @@
 package com.example.hemsapp;
-import java.util.Date;
 
 public class User {
 
     private String Name;
     private String Surname;
-    private Date birthDay;
+    private String fullName;
+    private String birthDay;
     private String email;
     private String position;
     private String status;
@@ -16,16 +16,18 @@ public class User {
     private Boolean online;
     private long lastSeen;
 
-    public User(String name, String surname, String email, String position, String status, String image, String thumbImage, String deviceToken) {
+    public User(String name, String surname,String birthDay, String email, String position, String status, String image, String gender,String thumbImage, String deviceToken) {
         this.Name = name;
         this.Surname = surname;
+        this.birthDay = birthDay;
         this.email = email;
         this.position = position;
         this.status = status;
         this.image = image;
+        this.gender = gender;
         this.thumbImage = thumbImage;
         this.deviceToken = deviceToken;
-;    }
+    }
 
     public User() {} // Firebase Required
 
@@ -45,11 +47,11 @@ public class User {
         Surname = surname;
     }
 
-    public Date getAge() {
+    public String getBirthDay() {
         return birthDay;
     }
 
-    public void setAge(Date birthDay) {
+    public void setBirthDay(String birthDay) {
         this.birthDay = birthDay;
     }
 
@@ -93,14 +95,6 @@ public class User {
         this.thumbImage = thumbImage;
     }
 
-    public Date getBirthDay() {
-        return birthDay;
-    }
-
-    public void setBirthDay(Date birthDay) {
-        this.birthDay = birthDay;
-    }
-
     public String getGender() {
         return gender;
     }
@@ -135,5 +129,9 @@ public class User {
 
     public String getFullName(){
         return this.Name + " " + this.Surname;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 }

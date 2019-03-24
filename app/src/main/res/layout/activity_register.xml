@@ -6,14 +6,14 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="20dp"
+    android:padding="20dip"
     tools:context=".RegisterActivity">
 
     <EditText
         android:id="@+id/etName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="5dip"
         android:backgroundTint="@color/gri"
         android:ems="20"
         android:hint="@string/rs_name"
@@ -23,27 +23,42 @@
         android:id="@+id/etSurName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="5dip"
         android:backgroundTint="@color/gri"
         android:ems="20"
         android:hint="@string/rs_surname"
         android:inputType="textPersonName" />
 
-    <EditText
-        android:id="@+id/etBirthDay"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:backgroundTint="@color/gri"
-        android:ems="20"
-        android:hint="@string/rs_birthDay"
-        android:inputType="date" />
+        android:layout_marginBottom="5dip"
+        android:gravity="center|left"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/etBirthDay"
+            android:layout_width="260dip"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/gri"
+            android:ems="20"
+            android:hint="@string/rs_birthDay"
+            android:inputType="date" />
+
+        <Button
+            android:id="@+id/btnDatePicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:text="Date"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
 
     <EditText
         android:id="@+id/etEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="5dip"
         android:backgroundTint="@color/gri"
         android:ems="20"
         android:hint="@string/user_email"
@@ -53,7 +68,7 @@
         android:id="@+id/etPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="5dip"
         android:backgroundTint="@color/gri"
         android:ems="20"
         android:hint="@string/user_password"
@@ -63,57 +78,69 @@
         android:id="@+id/etPassword2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="5dip"
         android:backgroundTint="@color/gri"
         android:ems="20"
         android:hint="@string/user_password2"
         android:inputType="textPassword" />
 
-    <TextView
-        android:id="@+id/tvGender"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:fontFamily="sans-serif"
-        android:paddingLeft="3dp"
-        android:paddingRight="3dp"
-        android:text="@string/rs_gender"
-        android:textColor="@color/gri"
-        android:textSize="18sp" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp">
+        android:layout_marginBottom="20dip"
+        android:gravity="center|left"
+        android:orientation="horizontal">
 
-        <RadioButton
-            android:id="@+id/rbMale"
+        <TextView
+            android:id="@+id/tvGender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/gri"
-            android:buttonTint="@color/gri"
-            android:text="@string/rs_male"
-            android:textColor="@color/gri" />
+            android:layout_marginRight="10dip"
+            android:fontFamily="sans-serif"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
+            android:text="@string/rs_gender"
+            android:textColor="@color/gri"
+            android:textSize="20sp" />
 
-        <RadioButton
-            android:id="@+id/rbFemale"
+        <RadioGroup
+            android:id="@+id/rgGender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/gri"
-            android:buttonTint="@color/gri"
-            android:text="@string/rs_female"
-            android:textColor="@color/gri" />
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rbMale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dip"
+                android:layout_weight="1"
+                android:backgroundTint="@color/gri"
+                android:buttonTint="@color/gri"
+                android:text="@string/rs_male"
+                android:textColor="@color/gri" />
+
+            <RadioButton
+                android:id="@+id/rbFemale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@color/gri"
+                android:buttonTint="@color/gri"
+                android:text="@string/rs_female"
+                android:textColor="@color/gri" />
+        </RadioGroup>
     </LinearLayout>
 
     <Button
         android:id="@+id/btnSubmit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="20dip"
+        android:background="@color/colorPrimaryDark"
         android:text="@string/btn_submit"
-        android:textAllCaps="false" />
+        android:textAllCaps="false"
+        android:textColor="@android:color/white" />
 
     <TextView
         android:id="@+id/tvAlreadyExist"
@@ -121,5 +148,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
         android:gravity="center"
-        android:text="@string/account_already_exist" />
+        android:text="@string/account_already_exist"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="18sp" />
 </LinearLayout>
