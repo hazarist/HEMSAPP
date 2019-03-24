@@ -37,4 +37,11 @@
     <string name="btnAddTask">Add New Task</string>
     <string name="rs_task_single_name">Task Name</string>
     <string name="rs_task_single_who">Who</string>
+    <string name="rs_task_name">Task Name</string>
+    <string name="rs_task_description">Description</string>
+    <string name="rs_task_type">Type</string>
+    <string name="rs_task_location">Location</string>
+    <string name="rs_task_priority_urgent">Urgent</string>
+    <string name="rs_task_priority_important">Important</string>
+    <string name="rs_task_priority_standart">Standart</string>
 </resources>

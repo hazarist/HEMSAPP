@@ -13,13 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ivTaskSingleImage"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:padding="10dp" />
+            android:layout_width="64dip"
+            android:layout_height="64dip"
+            android:padding="10dip" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -35,9 +36,8 @@
                     android:id="@+id/tvTaskSingleName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="5dp"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="0dp"
+                    android:paddingLeft="5dip"
+                    android:paddingTop="5dip"
                     android:text="@string/rs_task_single_name"
                     android:textColor="@android:color/black"
                     android:textSize="18sp"
@@ -47,8 +47,8 @@
                     android:id="@+id/ivTaskStatusIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginTop="7dp"
+                    android:layout_marginLeft="5dip"
+                    android:layout_marginTop="7dip"
                     android:visibility="invisible"
                     app:srcCompat="@android:drawable/presence_online" />
             </LinearLayout>
@@ -57,10 +57,8 @@
                 android:id="@+id/tvSingleWho"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_weight="1"
-                android:paddingLeft="5dp"
-                android:paddingTop="3dp"
+                android:layout_marginTop="5dip"
+                android:paddingLeft="5dip"
                 android:text="@string/rs_task_single_who"
                 android:textColor="@android:color/black"
                 android:textSize="14sp" />

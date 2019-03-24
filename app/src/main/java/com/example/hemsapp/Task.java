@@ -1,31 +1,28 @@
 package com.example.hemsapp;
 
 public class Task {
-    private long ID;
+
     private String name;
-    private String definition;
-    private Boolean state;
+    private String description;
+    private String state;
     private String byWho; //UID
     private String type; // enum id si olabilir
-    private String where; // room object olursa onun id si gelir. oda kolidor vs vs
+    private String location; // room object olursa onun id si gelir. oda kolidor vs vs
+    private String priority;
+    private long taskCreateTime;
+    private long taskAssignTime;
+    private long taskDoneTime;
 
     public Task() { } // for firebase
 
-    public Task(String name, String definition, String type, String where) {
+    public Task(String name, String description, String type, String location, String priority) {
         this.name = name;
-        this.definition = definition;
-        this.state = false;
-        this.byWho = "No Body";
+        this.description = description;
+        this.state = "waiting";
+        this.byWho = "It is in queue.";
         this.type = type;
-        this.where = where;
-    }
-
-    public long getID() {
-        return ID;
-    }
-
-    public void setID(long ID) {
-        this.ID = ID;
+        this.location = location;
+        this.priority = priority;
     }
 
     public String getName() {
@@ -36,19 +33,19 @@ public class Task {
         this.name = name;
     }
 
-    public String getDefinition() {
-        return definition;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDefinition(String definition) {
-        this.definition = definition;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public Boolean getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(Boolean state) {
+    public void setState(String state) {
         this.state = state;
     }
 
@@ -68,11 +65,43 @@ public class Task {
         this.type = type;
     }
 
-    public String getWhere() {
-        return where;
+    public String getLocation() {
+        return location;
     }
 
-    public void setWhere(String where) {
-        this.where = where;
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public long getTaskCreateTime() {
+        return taskCreateTime;
+    }
+
+    public void setTaskCreateTime(long taskCreateTime) {
+        this.taskCreateTime = taskCreateTime;
+    }
+
+    public long getTaskAssignTime() {
+        return taskAssignTime;
+    }
+
+    public void setTaskAssignTime(long taskAssignTime) {
+        this.taskAssignTime = taskAssignTime;
+    }
+
+    public long getTaskDoneTime() {
+        return taskDoneTime;
+    }
+
+    public void setTaskDoneTime(long taskDoneTime) {
+        this.taskDoneTime = taskDoneTime;
     }
 }

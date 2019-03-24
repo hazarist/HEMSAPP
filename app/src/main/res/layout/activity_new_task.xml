@@ -4,62 +4,77 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="100px"
+    android:layout_margin="40dip"
     android:gravity="center|center_horizontal|center_vertical"
     android:orientation="vertical"
     tools:context=".NewTaskActivity">
-
-    <TextView
-        android:id="@+id/tvTaskName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Task Name" />
 
     <EditText
         android:id="@+id/etTaskName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="textPersonName" />
-
-    <TextView
-        android:id="@+id/tvDefinition"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Definition" />
+        android:hint="@string/rs_task_name"
+        android:inputType="textPersonName"
+        android:layout_marginBottom="10dip"/>
 
     <EditText
-        android:id="@+id/etDefinition"
+        android:id="@+id/etTaskDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dip"
         android:ems="10"
-        android:inputType="textPersonName" />
-
-    <TextView
-        android:id="@+id/tvType"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Type" />
+        android:hint="@string/rs_task_description"
+        android:inputType="textMultiLine" />
 
     <EditText
-        android:id="@+id/etType"
+        android:id="@+id/etTaskType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dip"
         android:ems="10"
+        android:hint="@string/rs_task_type"
         android:inputType="textPersonName" />
-
-    <TextView
-        android:id="@+id/tvRoomNum"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Room Number" />
 
     <EditText
-        android:id="@+id/etRoomNum"
+        android:id="@+id/etTaskLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dip"
         android:ems="10"
+        android:hint="@string/rs_task_location"
         android:inputType="textPersonName" />
+
+    <RadioGroup
+        android:id="@+id/rgTaskPriority"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dip"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rbUrgent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/rs_task_priority_urgent"
+            android:text="@string/rs_task_priority_urgent" />
+
+        <RadioButton
+            android:id="@+id/rbImportant"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/rs_task_priority_important" />
+
+        <RadioButton
+            android:id="@+id/rbStandart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/rs_task_priority_standart" />
+
+    </RadioGroup>
 
     <Button
         android:id="@+id/btnAddNewTask"

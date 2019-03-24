@@ -48,7 +48,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private FirebaseAuth mAuth;
     private String currentUserID;
 
     TextView tvFullName;
@@ -70,7 +69,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private static final int TOTAL_ITEMS_TO_LOAD = 10;
     private static final int GALLERY_PICK = 1;
 
-    private int mCurrentPage = 1;
     private int itemPos = 0;
     private String mLastKey;
     private String mPrevKey;
@@ -93,7 +91,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         mImageStorage = FirebaseStorage.getInstance().getReference();
         rootRef = FirebaseDatabase.getInstance().getReference();
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         if(mAuth != null && mAuth.getCurrentUser() != null)
         currentUserID = mAuth.getCurrentUser().getUid();
 
@@ -162,11 +160,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         tvLastSeen.setText(R.string.rs_online);
                     } else {
 
-                        GetTimeAgo timeAgo = new GetTimeAgo();
-
                         long lastTime =  user.getLastSeen();
 
-                        String lastSeenTime = timeAgo.getTimeAgo(lastTime,getApplicationContext());
+                        String lastSeenTime = GetTimeAgo.getTimeAgo(lastTime,getApplicationContext());
 
                         tvLastSeen.setText(lastSeenTime);
                     }
@@ -272,6 +268,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private void loadMessages() {
 
         DatabaseReference messageRef = rootRef.child("messages").child(currentUserID).child(chatUser);
+        int mCurrentPage = 1;
         Query messageQuery = messageRef.limitToLast(mCurrentPage * TOTAL_ITEMS_TO_LOAD);
 
         messageQuery.addChildEventListener(new ChildEventListener() {
