@@ -4,19 +4,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="40dip"
+    android:layout_margin="30dip"
     android:gravity="center|center_horizontal|center_vertical"
     android:orientation="vertical"
     tools:context=".NewTaskActivity">
+
+    <TextView
+        android:id="@+id/tvAssignedEmployee"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dip"
+        android:paddingLeft="4dip"
+        android:text="@string/rs_new_task"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:layout_marginLeft="4dip"
+        android:layout_marginRight="4dip"
+        android:background="#89000000"
+        android:visibility="visible" />
 
     <EditText
         android:id="@+id/etTaskName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dip"
         android:ems="10"
         android:hint="@string/rs_task_name"
-        android:inputType="textPersonName"
-        android:layout_marginBottom="10dip"/>
+        android:inputType="textPersonName" />
 
     <EditText
         android:id="@+id/etTaskDescription"
@@ -77,10 +96,22 @@
     </RadioGroup>
 
     <Button
+        android:id="@+id/btnChangeAssignedEmployee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dip"
+        android:background="@color/colorAccent"
+        android:padding="5dip"
+        android:text="Change Assigned Employee"
+        android:textColor="@android:color/white"
+        android:visibility="gone" />
+
+    <Button
         android:id="@+id/btnAddNewTask"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimaryDark"
         android:text="ADD TASK"
         android:textColor="@android:color/white" />
+
 </LinearLayout>

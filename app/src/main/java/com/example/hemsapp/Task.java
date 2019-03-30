@@ -12,10 +12,11 @@ public class Task {
     private long taskCreateTime;
     private long taskAssignTime;
     private long taskDoneTime;
+    private String isDeleted;
 
     public Task() { } // for firebase
 
-    public Task(String name, String description, String type, String location, String priority) {
+    public Task(String name, String description, String type, String location, String priority,String isDeleted) {
         this.name = name;
         this.description = description;
         this.state = "waiting";
@@ -23,6 +24,7 @@ public class Task {
         this.type = type;
         this.location = location;
         this.priority = priority;
+        this.isDeleted = isDeleted;
     }
 
     public String getName() {
@@ -103,5 +105,13 @@ public class Task {
 
     public void setTaskDoneTime(long taskDoneTime) {
         this.taskDoneTime = taskDoneTime;
+    }
+
+    public String getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(String isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

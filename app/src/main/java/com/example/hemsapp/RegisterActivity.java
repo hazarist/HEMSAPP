@@ -173,9 +173,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         firebaseDatabase = FirebaseDatabase.getInstance();
 
                         databaseReference = firebaseDatabase.getReference().child("Users").child(uid);
-                    }
 
-                    User newUSer = new User(name,surName,birthDay,email,position,status,gender,image,thumbImage,deviceToken);
+
+                    User newUSer = new User(uid,name,surName,birthDay,email,position,status,gender,image,thumbImage,deviceToken);
 
                             databaseReference.setValue(newUSer).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -193,7 +193,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                     Toast.makeText(getApplicationContext(),"Error!" + e.getMessage(),Toast.LENGTH_SHORT).show();
                                 }
                             });
-
+                    }
                 }else
                 {
                     pdRegister.dismiss();

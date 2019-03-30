@@ -69,8 +69,6 @@ public class UsersActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-
-
         FirebaseRecyclerOptions<User> options=
                 new FirebaseRecyclerOptions.Builder<User>()
                         .setQuery(usersDatabase,User.class)
@@ -136,12 +134,6 @@ public class UsersActivity extends AppCompatActivity {
         };
 
         rvUserList.setAdapter(firebaseRecyclerAdapter);
-        firebaseRecyclerAdapter.startListening();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         firebaseRecyclerAdapter.startListening();
     }
 

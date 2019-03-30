@@ -15,8 +15,10 @@ public class User {
     private String deviceToken;
     private Boolean online;
     private long lastSeen;
+    private String uid;
 
-    public User(String name, String surname,String birthDay, String email, String position, String status, String image, String gender,String thumbImage, String deviceToken) {
+    public User(String uid,String name, String surname,String birthDay, String email, String position, String status, String image, String gender,String thumbImage, String deviceToken) {
+        this.uid = uid;
         this.Name = name;
         this.Surname = surname;
         this.birthDay = birthDay;
@@ -133,5 +135,13 @@ public class User {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }
