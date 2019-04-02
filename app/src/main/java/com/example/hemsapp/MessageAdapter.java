@@ -15,6 +15,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -84,11 +85,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 if(user != null) {
                     viewHolder.displayName.setText(user.getFullName());
 
-                        Picasso.get().load(user.getThumbImage())
+                    Picasso.get().load(user.getThumbImage())
                                 .placeholder(R.mipmap.profile).into(viewHolder.profileImage);
 
                 }
-
 
                 if(message_type.equals("text")) {
                     viewHolder.messageText.setText(c.getMessage());
@@ -96,8 +96,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
                 } else {
                     viewHolder.messageText.setVisibility(View.INVISIBLE);
-                    Picasso.get().load(c.getMessage())
-                            .placeholder(R.mipmap.app_logo).into(viewHolder.messageImage);
+                    Picasso.get().load(c.getMessage()).into(viewHolder.messageImage);
                 }
             }
 

@@ -268,7 +268,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private void loadMessages() {
 
         DatabaseReference messageRef = rootRef.child("messages").child(currentUserID).child(chatUser);
-        int mCurrentPage = 1;
+        int mCurrentPage = 2;
         Query messageQuery = messageRef.limitToLast(mCurrentPage * TOTAL_ITEMS_TO_LOAD);
 
         messageQuery.addChildEventListener(new ChildEventListener() {
@@ -286,7 +286,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 messagesList.add(messages);
                 messageAdapter.notifyDataSetChanged();
 
-                mMessagesList.scrollToPosition(messagesList.size()-1);
+                mMessagesList.scrollToPosition(messagesList.size()+1);
 
                 refreshLayout.setRefreshing(false);
             }
@@ -392,45 +392,47 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             final String push_id = user_message_push.getKey();
 
 
-            StorageReference filepath = mImageStorage.child("message_images").child( push_id + ".jpg");
+            final StorageReference filepath = mImageStorage.child("message_images").child( push_id + ".jpg");
 
             if(imageUri !=null)
-            filepath.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            filepath.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                                String download_url = uri.toString();
 
-                    if (taskSnapshot.getMetadata() != null && taskSnapshot.getMetadata().getReference() != null) {
-                        String download_url = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+                                Map messageMap = new HashMap();
+                                messageMap.put("message", download_url);
+                                messageMap.put("seen", false);
+                                messageMap.put("type", "image");
+                                messageMap.put("time", ServerValue.TIMESTAMP);
+                                messageMap.put("from", currentUserID);
 
+                                Map messageUserMap = new HashMap();
+                                messageUserMap.put(current_user_ref + "/" + push_id, messageMap);
+                                messageUserMap.put(chat_user_ref + "/" + push_id, messageMap);
 
-                        Map messageMap = new HashMap();
-                        messageMap.put("message", download_url);
-                        messageMap.put("seen", false);
-                        messageMap.put("type", "image");
-                        messageMap.put("time", ServerValue.TIMESTAMP);
-                        messageMap.put("from", currentUserID);
+                                etChatMessage.setText("");
 
-                        Map messageUserMap = new HashMap();
-                        messageUserMap.put(current_user_ref + "/" + push_id, messageMap);
-                        messageUserMap.put(chat_user_ref + "/" + push_id, messageMap);
+                                rootRef.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
+                                    @Override
+                                    public void onComplete(DatabaseError databaseError,@NonNull DatabaseReference databaseReference) {
 
-                        etChatMessage.setText("");
+                                        if (databaseError != null) {
 
-                        rootRef.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
-                            @Override
-                            public void onComplete(DatabaseError databaseError,@NonNull DatabaseReference databaseReference) {
+                                            Log.d("CHAT_LOG", databaseError.getMessage());
 
-                                if (databaseError != null) {
+                                        }
 
-                                    Log.d("CHAT_LOG", databaseError.getMessage());
+                                    }
+                                });
 
-                                }
 
                             }
-                        });
+                    });
 
-
-                    }
                 }
             });
 
