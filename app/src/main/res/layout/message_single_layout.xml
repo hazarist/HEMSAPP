@@ -50,11 +50,11 @@
 
     <ImageView
         android:id="@+id/message_image_layout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignStart="@+id/tvMessageText"
         android:layout_below="@+id/tvMessageText"
+        android:layout_alignStart="@+id/tvMessageText"
+        android:layout_alignParentEnd="true"
         android:layout_marginLeft="0dp"
         android:layout_toEndOf="@+id/messageProfileIcon"
         android:padding="0dp"

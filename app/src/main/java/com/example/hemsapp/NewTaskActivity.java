@@ -64,7 +64,7 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
         radioGroup = findViewById(R.id.rgTaskPriority);
         rbUrgent = findViewById(R.id.rbUrgent);
         rbImportant = findViewById(R.id.rbImportant);
-        rbStandard = findViewById(R.id.rbStandart);
+        rbStandard = findViewById(R.id.rbStandard);
         rbStandard.setChecked(true);
 
         btnAddTask = findViewById(R.id.btnAddNewTask);
@@ -168,7 +168,7 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
                     taskPriority = rbImportant.getText().toString();
                     break;
                 }
-                case R.id.rbStandart: {
+                case R.id.rbStandard: {
                     taskPriority = rbStandard.getText().toString();
                     break;
                 }

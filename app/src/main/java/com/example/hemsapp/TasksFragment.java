@@ -45,8 +45,8 @@ public class TasksFragment extends Fragment {
     private View taskView;
     private RecyclerView taskList;
     private DatabaseReference tasksDatabaseReference;
+    private DatabaseReference userDatabaseReference;
     private FirebaseRecyclerAdapter<Task,TaskViewHolder> firebaseRecyclerAdapter;
-    private String byWho;
     private User currentUser = LoginActivity.staticUser;
 
     public TasksFragment() {
@@ -63,6 +63,8 @@ public class TasksFragment extends Fragment {
 
         tasksDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Tasks");
         tasksDatabaseReference.keepSynced(true);
+
+        userDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
 
         taskList.setHasFixedSize(true);
         taskList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -137,6 +139,7 @@ public class TasksFragment extends Fragment {
                                             if (model.getByWho().equals("It is in queue.")) {
                                                 tasksDatabaseReference.child(taskID).child("byWho").setValue(currentUser.getUid());
                                                 tasksDatabaseReference.child(taskID).child("taskAssignTime").setValue(ServerValue.TIMESTAMP);
+                                                userDatabaseReference.child(currentUser.getUid()).child("status").setValue("Busy");
                                                 Toast.makeText(getContext(), "Task assigned to you.", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 if (model.getByWho().equals(currentUser.getUid())) {
@@ -157,6 +160,7 @@ public class TasksFragment extends Fragment {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             tasksDatabaseReference.child(taskID).child("taskDoneTime").setValue(ServerValue.TIMESTAMP);
+                                            userDatabaseReference.child(currentUser.getUid()).child("status").setValue("Available");
                                             Toast.makeText(getContext(), "Task is done.", Toast.LENGTH_SHORT).show();
                                         }
                                     });

@@ -3,10 +3,12 @@
  import android.content.Intent;
  import android.graphics.Typeface;
  import android.os.Bundle;
+ import android.os.Message;
  import android.support.annotation.NonNull;
  import android.support.v4.app.Fragment;
  import android.support.v7.widget.LinearLayoutManager;
  import android.support.v7.widget.RecyclerView;
+ import android.text.TextUtils;
  import android.view.LayoutInflater;
  import android.view.View;
  import android.view.ViewGroup;
@@ -110,10 +112,11 @@
                          public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String s) {
 
                              if(dataSnapshot.child("message").getValue() != null) {
-                                 String data = dataSnapshot.child("message").getValue().toString();
-                                 convViewHolder.setMessage(data, conv.isSeen());
+                                 Messages message = dataSnapshot.getValue(Messages.class);
+                                 if (message != null && message.getType().equals("text")) {
+                                     convViewHolder.setMessage(message.getMessage(), conv.isSeen());
+                                 }
                              }
-
                          }
 
                          @Override
@@ -212,6 +215,7 @@
          public void setMessage(String message, boolean isSeen){
 
              TextView userStatusView = mView.findViewById(R.id.tvSingleStatus);
+
              userStatusView.setText(message);
 
              if(!isSeen){

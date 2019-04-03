@@ -43,6 +43,6 @@
     <string name="rs_task_location">Location</string>
     <string name="rs_task_priority_urgent">Urgent</string>
     <string name="rs_task_priority_important">Important</string>
-    <string name="rs_task_priority_standart">Standart</string>
+    <string name="rs_task_priority_standart">Standard</string>
     <string name="rs_new_task">New Task</string>
 </resources>

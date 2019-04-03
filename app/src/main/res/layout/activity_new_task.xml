@@ -87,7 +87,7 @@
             android:text="@string/rs_task_priority_important" />
 
         <RadioButton
-            android:id="@+id/rbStandart"
+            android:id="@+id/rbStandard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"

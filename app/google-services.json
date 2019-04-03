@@ -31,8 +31,12 @@
           }
         },
         {
-          "client_id": "805479187516-16kamav1i44crf3s6r7l06mf2fgcomu2.apps.googleusercontent.com",
-          "client_type": 3
+          "client_id": "805479187516-queti2et79vckuuhr0k6o911rv23imra.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.hemsapp",
+            "certificate_hash": "2cbd727f3f1991aebd625b4713c7eb77c118aced"
+          }
         }
       ],
       "api_key": [
@@ -41,20 +45,13 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "805479187516-16kamav1i44crf3s6r7l06mf2fgcomu2.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }

@@ -60,7 +60,6 @@
                 android:layout_weight="1"
                 android:paddingLeft="5dip"
                 android:paddingTop="3dip"
-                android:text="@string/rs_user_single_status"
                 android:textColor="@android:color/black"
                 android:textSize="14sp" />
 
