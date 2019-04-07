@@ -38,6 +38,7 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="5dip"
                     android:paddingTop="5dip"
+                    android:paddingRight="5dip"
                     android:text="@string/rs_task_single_name"
                     android:textColor="@android:color/black"
                     android:textSize="18sp"
@@ -47,8 +48,8 @@
                     android:id="@+id/ivTaskStatusIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="5dip"
                     android:layout_marginTop="7dip"
+                    android:contentDescription="@string/rs_task_status"
                     android:visibility="invisible"
                     app:srcCompat="@android:drawable/presence_online" />
             </LinearLayout>
@@ -59,6 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dip"
                 android:paddingLeft="5dip"
+                android:paddingRight="5dip"
                 android:text="@string/rs_task_single_who"
                 android:textColor="@android:color/black"
                 android:textSize="14sp" />

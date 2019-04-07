@@ -73,6 +73,8 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
         btnAddTask.setOnClickListener(this);
         btnChangeAssignedEmployee.setOnClickListener(this);
 
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("Tasks");
+        userDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
     }
 
     @Override
@@ -82,12 +84,10 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
         if(getIntent().hasExtra("taskID")) {
             currentTaskID = getIntent().getStringExtra("taskID");
 
-            databaseReference = FirebaseDatabase.getInstance().getReference().child("Tasks");
-
             if(getIntent().hasExtra("userID")) {
                 userUid = getIntent().getStringExtra("userID");
                 if(!userUid.equals("It is in queue.")) {
-                    userDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
+
                     userDatabaseReference.child(userUid).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

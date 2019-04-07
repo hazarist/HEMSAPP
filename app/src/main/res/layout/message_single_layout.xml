@@ -10,7 +10,6 @@
         android:id="@+id/messageProfileIcon"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:layout_weight="0"
         android:src="@mipmap/profile" />
 
     <TextView
@@ -18,10 +17,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/name_text_layout"
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/messageProfileIcon"
         android:padding="0dp"
-        android:text="Message Text"
+        android:text="@string/message_text"
         android:textColor="#444444"
         android:textSize="14sp" />
 
@@ -30,9 +29,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/messageProfileIcon"
-        android:text="Display Name"
+        android:text="@string/display_name"
         android:textColor="@android:color/black"
         android:textSize="15sp"
         android:textStyle="bold" />
@@ -42,10 +41,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="2dp"
         android:layout_toEndOf="@+id/name_text_layout"
-        android:text="00:00"
+        android:text="@string/_00_00"
         android:textSize="12sp" />
 
     <ImageView
@@ -55,8 +54,9 @@
         android:layout_below="@+id/tvMessageText"
         android:layout_alignStart="@+id/tvMessageText"
         android:layout_alignParentEnd="true"
-        android:layout_marginLeft="0dp"
+        android:layout_marginStart="0dp"
         android:layout_toEndOf="@+id/messageProfileIcon"
+        android:contentDescription="@string/rs_message_single_image"
         android:padding="0dp"
         android:scaleType="centerCrop" />
 

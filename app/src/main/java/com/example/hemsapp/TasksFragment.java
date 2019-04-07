@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SyncRequest;
 import android.graphics.Color;
+import android.graphics.ColorSpace;
 import android.os.Bundle;
 import android.preference.DialogPreference;
 import android.provider.ContactsContract;
@@ -100,8 +101,6 @@ public class TasksFragment extends Fragment {
                     @Override
                     public boolean onLongClick(View v) {
 
-
-
                             if(currentUser.getPosition().equals(UserRole.Manager.toString())) {
                                 final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                                 builder.setTitle("Delete!");
@@ -125,7 +124,7 @@ public class TasksFragment extends Fragment {
                                     builder.setTitle("Take a task.");
                                     builder.setMessage("Do you want to take this task?");
 
-                                builder.setPositiveButton("No", new DialogInterface.OnClickListener() {
+                                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         Toast.makeText(getContext(), "Task assigned operation canceled.", Toast.LENGTH_SHORT).show();
@@ -133,7 +132,7 @@ public class TasksFragment extends Fragment {
                                 });
 
 
-                                    builder.setNegativeButton("Yes", new DialogInterface.OnClickListener() {
+                                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             if (model.getByWho().equals("It is in queue.")) {
@@ -259,6 +258,7 @@ public class TasksFragment extends Fragment {
         }
 
         public void setTasksDidByWho(String byWho){
+
             final TextView tvTaskDidByWho = mview.findViewById(R.id.tvSingleWho);
             if(byWho != null) {
                 if (!byWho.equals("It is in queue.") && !TextUtils.isEmpty(byWho)) {
@@ -278,6 +278,9 @@ public class TasksFragment extends Fragment {
                         }
                     });
                 } else if (byWho.equals("It is in queue.")) {
+                    ImageView taskState = mview.findViewById(R.id.ivTaskStatusIcon);
+                    taskState.setVisibility(View.VISIBLE);
+                    taskState.setImageResource(R.mipmap.task_in_queue);
                     tvTaskDidByWho.setText("It is in queue.");
                 }
             }
@@ -290,24 +293,28 @@ public class TasksFragment extends Fragment {
 
             if(priority != null){
             if(priority.equals("Urgent")) {
-                taskState.setColorFilter(Color.RED);
+                taskState.setColorFilter(Color.parseColor("#FF001B"));
             }else if(priority.equals("Important")){
-                taskState.setColorFilter(Color.YELLOW);
+                taskState.setColorFilter(Color.parseColor("#FF9E00"));
             }else if(priority.equals("Standard")){
-                taskState.setColorFilter(Color.GREEN);
+                taskState.setColorFilter(Color.parseColor("#0067FF"));
             }
             }
         }
 
         public void setTasksState(String state){
             if(state != null) {
-                if (!state.equals("inProcess")) {
-                    CircleImageView taskPriorityView = mview.findViewById(R.id.ivTaskSingleImage);
-                    if (state.equals("waiting")) {
-                        taskPriorityView.setImageResource(R.mipmap.task_state_in_process);
-                    } else if (state.equals("done")) {
-                        taskPriorityView.setImageResource(R.mipmap.task_state_done);
-                    }
+                CircleImageView taskPriorityView = mview.findViewById(R.id.ivTaskSingleImage);
+                taskPriorityView.setImageResource(R.mipmap.task_default_image);
+                ImageView taskState = mview.findViewById(R.id.ivTaskStatusIcon);
+                taskState.setVisibility(View.VISIBLE);
+
+                if (state.equals("waiting")) {
+                    taskState.setImageResource(R.mipmap.task_in_progress);
+                }
+
+                if (state.equals("done")) {
+                    taskState.setImageResource(R.mipmap.task_done);
                 }
             }
         }

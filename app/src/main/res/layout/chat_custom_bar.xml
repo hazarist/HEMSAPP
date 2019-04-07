@@ -11,15 +11,15 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dip"
+        android:layout_marginEnd="10dip"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/tvChatUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text="@string/textview"
             android:textColor="@android:color/white"
             android:textSize="20sp" />
 
@@ -27,7 +27,7 @@
             android:id="@+id/tvChatLastSeen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text="@string/chat_last_seen"
             android:textColor="@android:color/white"
             android:textSize="14sp" />
 
@@ -39,10 +39,9 @@
         android:layout_height="40dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginStart="10dip"
+        android:layout_marginTop="5dip"
+        android:layout_marginEnd="10dip"
         android:background="@mipmap/profile" />
 
 </RelativeLayout>

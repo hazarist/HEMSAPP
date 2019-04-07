@@ -37,6 +37,7 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="5dip"
                     android:paddingTop="5dip"
+                    android:paddingRight="5dip"
                     android:text="@string/rs_user_single_name"
                     android:textColor="@android:color/black"
                     android:textSize="18sp"
@@ -46,8 +47,9 @@
                     android:id="@+id/ivOnlineIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="5dip"
+                    android:layout_marginStart="5dip"
                     android:layout_marginTop="7dip"
+                    android:contentDescription="@string/rs_online_icon"
                     android:visibility="invisible"
                     app:srcCompat="@android:drawable/presence_online" />
             </LinearLayout>
@@ -55,11 +57,12 @@
             <TextView
                 android:id="@+id/tvSingleStatus"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_marginTop="5dip"
                 android:layout_weight="1"
                 android:paddingLeft="5dip"
                 android:paddingTop="3dip"
+                android:paddingRight="5dip"
                 android:textColor="@android:color/black"
                 android:textSize="14sp" />
 
