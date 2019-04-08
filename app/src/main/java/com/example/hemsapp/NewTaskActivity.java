@@ -8,10 +8,12 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +32,6 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
 
     EditText etTaskName;
     EditText etTaskDescription;
-    EditText etTaskType;
     EditText etTaskLocation;
 
     RadioGroup radioGroup;
@@ -41,12 +42,15 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
     Button btnAddTask;
     Button btnChangeAssignedEmployee;
 
+    Spinner spnTaskType;
+
     DatabaseReference databaseReference;
     DatabaseReference userDatabaseReference;
 
     private long taskID  = 0;
 
-    private  String currentTaskID;
+    private String selectedTaskType;
+    private String currentTaskID;
     private Task task;
     private String userUid;
     @Override
@@ -58,7 +62,6 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
 
         etTaskName = findViewById(R.id.etTaskName);
         etTaskDescription = findViewById(R.id.etTaskDescription);
-        etTaskType = findViewById(R.id.etTaskType);
         etTaskLocation = findViewById(R.id.etTaskLocation);
 
         radioGroup = findViewById(R.id.rgTaskPriority);
@@ -66,6 +69,19 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
         rbImportant = findViewById(R.id.rbImportant);
         rbStandard = findViewById(R.id.rbStandard);
         rbStandard.setChecked(true);
+
+        spnTaskType = findViewById(R.id.spnTaskType);
+        spnTaskType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedTaskType = parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selectedTaskType = parent.getItemAtPosition(0).toString();
+            }
+        });
 
         btnAddTask = findViewById(R.id.btnAddNewTask);
         btnChangeAssignedEmployee = findViewById(R.id.btnChangeAssignedEmployee);
@@ -120,7 +136,13 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
                     if(task != null) {
                         etTaskName.setText(task.getName());
                         etTaskDescription.setText(task.getDescription());
-                        etTaskType.setText(task.getType());
+                        if(task.getType().equals("Room")){
+                            spnTaskType.setSelection(0);
+                        }else if(task.getType().equals("Garden")){
+                            spnTaskType.setSelection(1);
+                        }else if(task.getType().equals("Kitchen")){
+                            spnTaskType.setSelection(2);
+                        }
                         etTaskLocation.setText(task.getLocation());
                         if(task.getPriority().equals("Urgent")){
                             rbUrgent.setChecked(true);
@@ -140,8 +162,8 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
             });
         }else {
             etTaskLocation.setText("");
-            etTaskType.setText("");
             etTaskDescription.setText("");
+            spnTaskType.setSelection(0);
             etTaskName.setText("");
             rbStandard.setChecked(true);
             btnAddTask.setText("ADD TASK");
@@ -155,7 +177,7 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
         if(v.getId() == btnAddTask.getId()) {
             String taskName = etTaskName.getText().toString();
             String taskDescription = etTaskDescription.getText().toString();
-            String taskType = etTaskType.getText().toString();
+            String taskType = selectedTaskType;
             String taskLocation = etTaskLocation.getText().toString();
             int checkedItem = radioGroup.getCheckedRadioButtonId();
             String taskPriority = "";
@@ -219,8 +241,8 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
 
                 Toast.makeText(NewTaskActivity.this, "New task successfully added.", Toast.LENGTH_SHORT).show();
                 etTaskLocation.setText("");
-                etTaskType.setText("");
                 etTaskDescription.setText("");
+                spnTaskType.setSelection(0);
                 etTaskName.setText("");
                 rbStandard.setChecked(true);
                 btnAddTask.setText("ADD TASK");

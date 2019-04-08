@@ -33,31 +33,40 @@
         android:id="@+id/etTaskName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip"
+        android:autofillHints=""
         android:ems="10"
         android:hint="@string/rs_task_name"
-        android:inputType="textPersonName"
-        android:autofillHints="" />
+        android:inputType="textPersonName" />
 
     <EditText
         android:id="@+id/etTaskDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dip"
+        android:autofillHints=""
         android:ems="10"
         android:hint="@string/rs_task_description"
-        android:inputType="textMultiLine"
-        android:autofillHints="" />
+        android:inputType="textMultiLine" />
 
-    <EditText
-        android:id="@+id/etTaskType"
+    <Spinner
+        android:id="@+id/spnTaskType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:entries="@array/task_types"
+        android:paddingTop="5dip"
+        android:paddingBottom="5dip"
+        android:prompt="@string/task_prompt" />
+
+    <View
+        android:id="@+id/divider4"
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:layout_marginLeft="4dip"
+        android:layout_marginRight="4dip"
         android:layout_marginBottom="10dip"
-        android:ems="10"
-        android:hint="@string/rs_task_type"
-        android:inputType="textPersonName"
-        android:autofillHints="" />
+        android:background="#89000000"
+        android:visibility="visible" />
 
     <EditText
         android:id="@+id/etTaskLocation"
