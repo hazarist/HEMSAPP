@@ -40,6 +40,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -156,18 +158,27 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         tvFullName.setText(userName);
 
-        rootRef.child("Users").child(chatUser).addValueEventListener(new ValueEventListener() {
+        rootRef.child("Users").child(chatUser).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
 
-                User user = dataSnapshot.getValue(User.class);
+                final User user = dataSnapshot.getValue(User.class);
 
                 if(user != null) {
                     tvFullName.setText(user.getFullName());
 
-                    Picasso.get().load(user.getThumbImage()).placeholder(R.mipmap.profile).into(ivChatUserImage);
+                    Picasso.get().load(user.getThumbImage()).networkPolicy(NetworkPolicy.OFFLINE).placeholder(R.mipmap.profile).into(ivChatUserImage, new Callback() {
+                        @Override
+                        public void onSuccess() {
 
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Picasso.get().load(user.getThumbImage()).placeholder(R.mipmap.profile).into(ivChatUserImage);
+                        }
+                    });
                     if (user.getOnline()) {
                         tvLastSeen.setText(R.string.rs_online);
                     } else {
@@ -390,65 +401,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-//        if(data != null && requestCode == GALLERY_PICK && resultCode == RESULT_OK){
-//
-//            Uri imageUri = data.getData();
-//
-//            final String current_user_ref = "messages/" + currentUserID + "/" + chatUser;
-//            final String chat_user_ref = "messages/" + chatUser + "/" + currentUserID;
-//
-//            DatabaseReference user_message_push = rootRef.child("messages")
-//                    .child(currentUserID).child(chatUser).push();
-//
-//            final String push_id = user_message_push.getKey();
-//
-//
-//            final StorageReference filepath = mImageStorage.child("message_images").child( push_id + ".jpg");
-//
-//            if(imageUri !=null)
-//            filepath.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-//                @Override
-//                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-//                    filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                        @Override
-//                        public void onSuccess(Uri uri) {
-//                                String download_url = uri.toString();
-//
-//                                Map messageMap = new HashMap();
-//                                messageMap.put("message", download_url);
-//                                messageMap.put("seen", false);
-//                                messageMap.put("type", "image");
-//                                messageMap.put("time", ServerValue.TIMESTAMP);
-//                                messageMap.put("from", currentUserID);
-//
-//                                Map messageUserMap = new HashMap();
-//                                messageUserMap.put(current_user_ref + "/" + push_id, messageMap);
-//                                messageUserMap.put(chat_user_ref + "/" + push_id, messageMap);
-//
-//                                etChatMessage.setText("");
-//
-//                                rootRef.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
-//                                    @Override
-//                                    public void onComplete(DatabaseError databaseError,@NonNull DatabaseReference databaseReference) {
-//
-//                                        if (databaseError != null) {
-//
-//                                            Log.d("CHAT_LOG", databaseError.getMessage());
-//
-//                                        }
-//
-//                                    }
-//                                });
-//
-//
-//                            }
-//                    });
-//
-//                }
-//            });
-//
-//        }
 
         if(data != null && requestCode == GALLERY_PICK && resultCode == RESULT_OK){
 

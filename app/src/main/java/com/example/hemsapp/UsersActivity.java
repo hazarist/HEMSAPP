@@ -21,6 +21,8 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 
@@ -164,9 +166,19 @@ public class UsersActivity extends AppCompatActivity {
             tvUserStatus.setText(status);
         }
 
-        public void setUserImage(String thumbImage){
-            CircleImageView userImageView = view.findViewById(R.id.ivUserSingleImage);
-            Picasso.get().load(thumbImage).placeholder(R.mipmap.profile).into(userImageView);
+        public void setUserImage(final String thumbImage){
+            final CircleImageView userImageView = view.findViewById(R.id.ivUserSingleImage);
+            Picasso.get().load(thumbImage).networkPolicy(NetworkPolicy.OFFLINE).placeholder(R.mipmap.profile).into(userImageView, new Callback() {
+                @Override
+                public void onSuccess() {
+
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Picasso.get().load(thumbImage).placeholder(R.mipmap.profile).into(userImageView);
+                }
+            });
         }
 
     }

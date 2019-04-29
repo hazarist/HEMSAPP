@@ -13,7 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,13 +21,11 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
-
-
-import java.sql.RowIdLifetime;
-
 import de.hdodenhof.circleimageview.CircleImageView;
-
+import weka.core.Instances;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,7 +40,7 @@ public class FriendsFragment extends Fragment {
 
 
     private View mMainView;
-
+    private static User currentUser = LoginActivity.staticUser;
     public FriendsFragment() {
         // Required empty public constructor
     }
@@ -78,9 +75,6 @@ public class FriendsFragment extends Fragment {
                         .setLifecycleOwner(this)
                         .build();
 
-
-
-
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(options) {
             @NonNull
             @Override
@@ -95,7 +89,8 @@ public class FriendsFragment extends Fragment {
             protected void onBindViewHolder(@Nullable final FriendsViewHolder holder, int position, @NonNull User user) {
 
                 if (holder != null) {
-                if(LoginActivity.staticUser.getUid().equals(user.getUid()) || user.getName().equals("admin")) {
+
+                if( currentUser != null && (currentUser.getUid().equals(user.getUid()) || user.getName().equals("admin"))) {
                     holder.itemView.setVisibility(View.GONE);
                     holder.itemView.setLayoutParams(new LinearLayout.LayoutParams(0,0));
                 }
@@ -177,10 +172,20 @@ public class FriendsFragment extends Fragment {
             tvUserStatus.setText(status);
         }
 
-        public void setUserImage(String thumb_image){
+        public void setUserImage(final String thumb_image){
 
-            CircleImageView userImageView = mView.findViewById(R.id.ivUserSingleImage);
-            Picasso.get().load(thumb_image).placeholder(R.mipmap.profile).into(userImageView);
+            final CircleImageView userImageView = mView.findViewById(R.id.ivUserSingleImage);
+            Picasso.get().load(thumb_image).networkPolicy(NetworkPolicy.OFFLINE).placeholder(R.mipmap.profile).into(userImageView, new Callback() {
+                @Override
+                public void onSuccess() {
+
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Picasso.get().load(thumb_image).placeholder(R.mipmap.profile).into(userImageView);
+                }
+            });
 
         }
 

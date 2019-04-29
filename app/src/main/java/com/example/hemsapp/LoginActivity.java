@@ -71,17 +71,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     staticUser = dataSnapshot.getValue(User.class);
 
-                    if(staticUser != null && staticUser.getPosition().equals(UserRole.Employee.toString())){
-                        databaseReference.child("online").setValue(true);
-                        Intent mainActivity = new Intent(LoginActivity.this,MainActivity.class);
-                        startActivity(mainActivity);
-                        finish();
-                    }else if(staticUser != null && staticUser.getPosition().equals(UserRole.Manager.toString())){
-                        databaseReference.child("online").setValue(true);
-                        Intent main2activity = new Intent(LoginActivity.this,Main2Activity.class);
-                        startActivity(main2activity);
-                        finish();
-                    }
+                    databaseReference.child("online").setValue(true);
+                    Intent mainActivity = new Intent(LoginActivity.this,MainActivity.class);
+                    startActivity(mainActivity);
+                    finish();
                 }
 
                 @Override
@@ -129,16 +122,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                                         @Override
                                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                             staticUser = dataSnapshot.getValue(User.class);
-                                                            String position = staticUser.getPosition();
-                                                            if(position.equals(UserRole.Employee.toString())) {
-                                                                Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                                                                startActivity(mainIntent);
-                                                                finish();
-                                                            }else if(position.equals(UserRole.Manager.toString())){
-                                                                Intent main2Intent = new Intent(LoginActivity.this, Main2Activity.class);
-                                                                startActivity(main2Intent);
-                                                                finish();
-                                                            }
+                                                            Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                                                            startActivity(mainIntent);
+                                                            finish();
                                                         }
                                                         @Override
                                                         public void onCancelled(@NonNull DatabaseError databaseError) {

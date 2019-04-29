@@ -33,7 +33,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -48,7 +54,7 @@ public class TasksFragment extends Fragment {
     private DatabaseReference tasksDatabaseReference;
     private DatabaseReference userDatabaseReference;
     private FirebaseRecyclerAdapter<Task,TaskViewHolder> firebaseRecyclerAdapter;
-    private User currentUser = LoginActivity.staticUser;
+    private static User currentUser = LoginActivity.staticUser;
 
     public TasksFragment() {
         // Required empty public constructor
@@ -96,12 +102,30 @@ public class TasksFragment extends Fragment {
                 holder.setTasksState(model.getState());
                 holder.setTasksDidByWho(model.getByWho());
                 final String taskID = getRef(position).getKey();
+                //TODO: Düzgün bir formata getir ve bunu firebase de kaydet sonra bunların ortalamasını al ve sınıflandır.
+                if(model.getTaskDoneTime() != 0){
+                    Date assignTime = new Date(model.getTaskAssignTime());
+                    Date doneTime = new Date(model.getTaskDoneTime());
+                    Calendar calendar = new GregorianCalendar().getInstance();
+                    calendar.setTime(assignTime);
+                    int a  =calendar.get(Calendar.HOUR_OF_DAY);
+                    int b = calendar.get(Calendar.MINUTE);
+
+                    calendar.setTime(doneTime);
+                    int d  =calendar.get(Calendar.HOUR_OF_DAY);
+                    int e = calendar.get(Calendar.MINUTE);
+
+                    int h = d-a;
+                    int g = e-b;
+
+                    String as = Integer.toString(h) + ":" + Integer.toString(g);
+                }
 
                 holder.mview.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
 
-                            if(currentUser.getPosition().equals(UserRole.Manager.toString())) {
+                            if(currentUser != null && currentUser.getPosition().equals(UserRole.Manager.toString())) {
                                 final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                                 builder.setTitle("Delete!");
                                 builder.setMessage("Do you want to delete this task?");
@@ -116,7 +140,7 @@ public class TasksFragment extends Fragment {
                                 builder.show();
                             }
 
-                            if(currentUser.getPosition().equals(UserRole.Employee.toString())){
+                            if(currentUser != null && currentUser.getPosition().equals(UserRole.Employee.toString())){
                                 final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
                                 if(model.getByWho().equals("It is in queue.")) {
@@ -151,7 +175,7 @@ public class TasksFragment extends Fragment {
                                     builder.show();
                                 }
 
-                                if(model.getByWho().equals(currentUser.getUid()) && model.getTaskDoneTime() == 0) {
+                                if(currentUser != null && model.getByWho().equals(currentUser.getUid()) && model.getTaskDoneTime() == 0) {
                                     builder.setTitle("Task");
                                     builder.setMessage("Is it done?");
 
@@ -176,7 +200,7 @@ public class TasksFragment extends Fragment {
                 holder.mview.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(currentUser.getPosition().equals(UserRole.Manager.toString())){
+                        if(currentUser != null && currentUser.getPosition().equals(UserRole.Manager.toString())){
                             CharSequence optionsManager[];
                             if(model.getByWho().equals("It is in queue.")) {
                                 optionsManager = new CharSequence[]{"Update Task", "Assign Task"};
@@ -265,11 +289,21 @@ public class TasksFragment extends Fragment {
                     usersDatabase.child(byWho).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            User user = dataSnapshot.getValue(User.class);
+                            final User user = dataSnapshot.getValue(User.class);
                             if (user != null) {
                                 tvTaskDidByWho.setText(user.getFullName());
-                                CircleImageView taskPriorityView = mview.findViewById(R.id.ivTaskSingleImage);
-                                Picasso.get().load(user.getThumbImage()).placeholder(R.mipmap.profile).into(taskPriorityView);
+                                final CircleImageView taskPriorityView = mview.findViewById(R.id.ivTaskSingleImage);
+                                Picasso.get().load(user.getThumbImage()).networkPolicy(NetworkPolicy.OFFLINE).placeholder(R.mipmap.profile).into(taskPriorityView, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+
+                                    }
+
+                                    @Override
+                                    public void onError(Exception e) {
+                                        Picasso.get().load(user.getThumbImage()).placeholder(R.mipmap.profile).into(taskPriorityView);
+                                    }
+                                });
                             }
                         }
 
@@ -286,7 +320,6 @@ public class TasksFragment extends Fragment {
             }
         }
 
-        //TODO: Takae status from database and change color case by case
         public void setTasksPriority(String priority){
             ImageView taskState = mview.findViewById(R.id.ivTaskStatusIcon);
             taskState.setVisibility(View.VISIBLE);

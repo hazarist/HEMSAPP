@@ -2,6 +2,7 @@ package com.example.hemsapp;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +14,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -76,19 +84,30 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
+                final User user = dataSnapshot.getValue(User.class);
 
-//                GetTimeAgo timeAgo = new GetTimeAgo();
-//                long lastTime =  user.getLastSeen();
-//                String lastSeenTime = timeAgo.getTimeAgo(lastTime,getApplicationContext());
+                long lastTime =  user.getLastSeen();
+
 
                 if(user != null) {
                     viewHolder.displayName.setText(user.getFullName());
+                    Picasso.get().load(user.getThumbImage()).networkPolicy(NetworkPolicy.OFFLINE).placeholder(R.mipmap.profile).into(viewHolder.profileImage, new Callback() {
+                        @Override
+                        public void onSuccess() {
 
-                    Picasso.get().load(user.getThumbImage())
-                                .placeholder(R.mipmap.profile).into(viewHolder.profileImage);
+                        }
 
+                        @Override
+                        public void onError(Exception e) {
+                            Picasso.get().load(user.getThumbImage()).placeholder(R.mipmap.profile).into(viewHolder.profileImage);
+                        }
+                    });
                 }
+
+                Date d = new Date(c.getTime());
+                Calendar calendar = new GregorianCalendar().getInstance();
+                calendar.setTime(d);
+                viewHolder.tvTime.setText(Integer.toString(calendar.get(Calendar.HOUR_OF_DAY)) + ":" + Integer.toString(calendar.get(Calendar.MINUTE)));
 
                 if(message_type.equals("text")) {
                     viewHolder.messageText.setText(c.getMessage());
@@ -96,7 +115,17 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
                 } else {
                     viewHolder.messageText.setVisibility(View.INVISIBLE);
-                    Picasso.get().load(c.getMessage()).into(viewHolder.messageImage);
+                    Picasso.get().load(c.getMessage()).networkPolicy(NetworkPolicy.OFFLINE).into(viewHolder.messageImage, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Picasso.get().load(c.getMessage()).into(viewHolder.messageImage);
+                        }
+                    });
                 }
             }
 

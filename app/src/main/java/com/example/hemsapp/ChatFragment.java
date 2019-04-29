@@ -25,6 +25,8 @@
  import com.google.firebase.database.FirebaseDatabase;
  import com.google.firebase.database.Query;
  import com.google.firebase.database.ValueEventListener;
+ import com.squareup.picasso.Callback;
+ import com.squareup.picasso.NetworkPolicy;
  import com.squareup.picasso.Picasso;
 
  import java.util.Map;
@@ -233,10 +235,19 @@
 
          }
 
-         public void setUserImage(String thumb_image){
+         public void setUserImage(final String thumb_image){
+             final CircleImageView userImageView = mView.findViewById(R.id.ivUserSingleImage);
+             Picasso.get().load(thumb_image).networkPolicy(NetworkPolicy.OFFLINE).placeholder(R.mipmap.profile).into(userImageView, new Callback() {
+                 @Override
+                 public void onSuccess() {
 
-             CircleImageView userImageView = mView.findViewById(R.id.ivUserSingleImage);
-             Picasso.get().load(thumb_image).placeholder(R.mipmap.profile).into(userImageView);
+                 }
+
+                 @Override
+                 public void onError(Exception e) {
+                     Picasso.get().load(thumb_image).placeholder(R.mipmap.profile).into(userImageView);
+                 }
+             });
 
          }
 
