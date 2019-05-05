@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private DatabaseReference databaseReference;
 
     ProgressDialog progressDialog;
-    public static User staticUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,8 +69,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    staticUser = dataSnapshot.getValue(User.class);
-
                     databaseReference.child("online").setValue(true);
                     Intent mainActivity = new Intent(LoginActivity.this,MainActivity.class);
                     startActivity(mainActivity);
@@ -118,10 +116,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     databaseReference.child("deviceToken").setValue(deviceToken).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
-                                                    databaseReference.addValueEventListener(new ValueEventListener() {
+                                                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                                                         @Override
                                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                            staticUser = dataSnapshot.getValue(User.class);
                                                             Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                                                             startActivity(mainIntent);
                                                             finish();

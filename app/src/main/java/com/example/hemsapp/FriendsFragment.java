@@ -19,13 +19,16 @@ import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import de.hdodenhof.circleimageview.CircleImageView;
-import weka.core.Instances;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,9 +41,12 @@ public class FriendsFragment extends Fragment {
 
     private DatabaseReference mUsersDatabase;
 
+    private FirebaseAuth firebaseAuth;
 
     private View mMainView;
-    private static User currentUser = LoginActivity.staticUser;
+
+    private User currentUser;
+
     public FriendsFragment() {
         // Required empty public constructor
     }
@@ -54,8 +60,22 @@ public class FriendsFragment extends Fragment {
 
         mFriendsList = mMainView.findViewById(R.id.rvFirendList);
 
+        firebaseAuth = FirebaseAuth.getInstance();
+
         mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
         mUsersDatabase.keepSynced(true);
+
+        mUsersDatabase.child(firebaseAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                currentUser = dataSnapshot.getValue(User.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         mFriendsList.setHasFixedSize(true);
         mFriendsList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -90,6 +110,7 @@ public class FriendsFragment extends Fragment {
 
                 if (holder != null) {
 
+
                 if( currentUser != null && (currentUser.getUid().equals(user.getUid()) || user.getName().equals("admin"))) {
                     holder.itemView.setVisibility(View.GONE);
                     holder.itemView.setLayoutParams(new LinearLayout.LayoutParams(0,0));
@@ -100,6 +121,7 @@ public class FriendsFragment extends Fragment {
                     final String userName = user.getFullName();
                     holder.setName(userName);
                     holder.setStatus(user.getStatus());
+                    //TODO: loop oluşuyor sürekli current user image çağırılıyor !
                     holder.setUserImage(user.getThumbImage());
                     holder.setUserOnline(user.getOnline().toString());
 
@@ -157,12 +179,10 @@ public class FriendsFragment extends Fragment {
 
         public FriendsViewHolder(View itemView) {
             super(itemView);
-
             mView = itemView;
         }
 
         public void setName(String name){
-
             TextView userNameView = mView.findViewById(R.id.tvUserSingleName);
             userNameView.setText(name);
         }

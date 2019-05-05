@@ -13,6 +13,8 @@ public class Task {
     private long taskAssignTime;
     private long taskDoneTime;
     private String isDeleted;
+    private String evaluation;
+    private String predictedEmployee;
 
     public Task() { } // for firebase
 
@@ -113,5 +115,21 @@ public class Task {
 
     public void setIsDeleted(String isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    public String getEvaluation() {
+        return evaluation;
+    }
+
+    public void setEvaluation(String evaluation) {
+        this.evaluation = evaluation;
+    }
+
+    public String getPredictedEmployee() {
+        return predictedEmployee;
+    }
+
+    public void setPredictedEmployee(String predictedEmployee) {
+        this.predictedEmployee = predictedEmployee;
     }
 }

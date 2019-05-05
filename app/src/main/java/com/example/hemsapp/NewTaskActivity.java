@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,7 +16,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -53,6 +51,11 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
     private String currentTaskID;
     private Task task;
     private String userUid;
+    private int counterUser = 0;
+    private int counterIns = 0;
+    private Instance[] instances;
+    private String[] allUsers;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +99,47 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onStart() {
         super.onStart();
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                instances = new Instance[(int) dataSnapshot.getChildrenCount()];
+                counterIns = 0;
+                for (DataSnapshot insDataSanpshot : dataSnapshot.getChildren()){
+                    Instance ins = insDataSanpshot.getValue(Instance.class);
+                    if(ins.getEvaluation() != null) {
+                        instances[counterIns] = ins;
+                        counterIns++;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+        userDatabaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                allUsers = new String[(int)dataSnapshot.getChildrenCount()];
+                counterUser = 0;
+                for (DataSnapshot userDataSnapshot : dataSnapshot.getChildren()){
+                    User user = userDataSnapshot.getValue(User.class);
+                    if(!user.getPosition().equals("Manager")) {
+                        allUsers[counterUser] = user.getUid();
+                        counterUser++;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         if(getIntent().hasExtra("taskID")) {
             currentTaskID = getIntent().getStringExtra("taskID");
@@ -179,7 +223,7 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
             String taskDescription = etTaskDescription.getText().toString();
             String taskType = selectedTaskType;
             String taskLocation = etTaskLocation.getText().toString();
-            int checkedItem = radioGroup.getCheckedRadioButtonId();
+            final int checkedItem = radioGroup.getCheckedRadioButtonId();
             String taskPriority = "";
             switch (checkedItem) {
                 case R.id.rbUrgent: {
@@ -198,6 +242,8 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
 
             if (!TextUtils.isEmpty(taskName) && !TextUtils.isEmpty(taskDescription) && !TextUtils.isEmpty(taskType) && !TextUtils.isEmpty(taskLocation) && !TextUtils.isEmpty(taskPriority)) {
 
+
+
                 if (currentTaskID == null) {
                     task = new Task(taskName, taskDescription, taskType, taskLocation, taskPriority,"0");
                 } else {
@@ -212,6 +258,9 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
                     if (!task.getPriority().equals(taskPriority))
                         task.setPriority(taskPriority);
                 }
+
+                NaiveBayes nv = new NaiveBayes();
+                final String predictedEmployee = nv.NaiveBayes(instances,counterIns,allUsers,counterUser,task);
 
                 databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -228,6 +277,7 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
                             @Override
                             public void onSuccess(Void aVoid) {
                                 databaseReference.child(Long.toString(taskID)).child("taskCreateTime").setValue(ServerValue.TIMESTAMP);
+                                databaseReference.child(Long.toString(taskID)).child("predictedEmployee").setValue(predictedEmployee);
                             }
                         });
 

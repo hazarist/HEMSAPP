@@ -68,7 +68,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         currentUserData = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUser.getUid());
         currentUserData.keepSynced(true);
 
-        currentUserData.addValueEventListener(new ValueEventListener() {
+        currentUserData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                final User currentUser = dataSnapshot.getValue(User.class);

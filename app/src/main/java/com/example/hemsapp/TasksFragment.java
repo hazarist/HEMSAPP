@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -52,10 +53,12 @@ public class TasksFragment extends Fragment {
     private View taskView;
     private RecyclerView taskList;
     private DatabaseReference tasksDatabaseReference;
+    private DatabaseReference tasksAverageDF;
     private DatabaseReference userDatabaseReference;
     private FirebaseRecyclerAdapter<Task,TaskViewHolder> firebaseRecyclerAdapter;
-    private static User currentUser = LoginActivity.staticUser;
-
+    private FirebaseAuth firebaseAuth;
+    private static User currentUser ;
+    private User predictedUser;
     public TasksFragment() {
         // Required empty public constructor
     }
@@ -64,6 +67,10 @@ public class TasksFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+
+
+
         taskView = inflater.inflate(R.layout.fragment_tasks, container, false);
 
         taskList = taskView.findViewById(R.id.task_list);
@@ -71,7 +78,23 @@ public class TasksFragment extends Fragment {
         tasksDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Tasks");
         tasksDatabaseReference.keepSynced(true);
 
+        tasksAverageDF = FirebaseDatabase.getInstance().getReference().child("TasksAverage");
+
         userDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
+
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        userDatabaseReference.child(firebaseAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                currentUser = dataSnapshot.getValue(User.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         taskList.setHasFixedSize(true);
         taskList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -82,9 +105,6 @@ public class TasksFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
-
-
 
         //TODO: order by their priority
         Query query = tasksDatabaseReference.orderByChild("isDeleted").equalTo("0");
@@ -102,24 +122,6 @@ public class TasksFragment extends Fragment {
                 holder.setTasksState(model.getState());
                 holder.setTasksDidByWho(model.getByWho());
                 final String taskID = getRef(position).getKey();
-                //TODO: Düzgün bir formata getir ve bunu firebase de kaydet sonra bunların ortalamasını al ve sınıflandır.
-                if(model.getTaskDoneTime() != 0){
-                    Date assignTime = new Date(model.getTaskAssignTime());
-                    Date doneTime = new Date(model.getTaskDoneTime());
-                    Calendar calendar = new GregorianCalendar().getInstance();
-                    calendar.setTime(assignTime);
-                    int a  =calendar.get(Calendar.HOUR_OF_DAY);
-                    int b = calendar.get(Calendar.MINUTE);
-
-                    calendar.setTime(doneTime);
-                    int d  =calendar.get(Calendar.HOUR_OF_DAY);
-                    int e = calendar.get(Calendar.MINUTE);
-
-                    int h = d-a;
-                    int g = e-b;
-
-                    String as = Integer.toString(h) + ":" + Integer.toString(g);
-                }
 
                 holder.mview.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
@@ -182,17 +184,73 @@ public class TasksFragment extends Fragment {
                                     builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
+
                                             tasksDatabaseReference.child(taskID).child("taskDoneTime").setValue(ServerValue.TIMESTAMP);
+                                            tasksDatabaseReference.child(taskID).child("state").setValue("done");
                                             userDatabaseReference.child(currentUser.getUid()).child("status").setValue("Available");
+
+                                            tasksDatabaseReference.child(taskID).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                                    final Task task = dataSnapshot.getValue(Task.class);
+                                                    Date assignTime = new Date(task.getTaskAssignTime());
+                                                    Date doneTime = new Date(task.getTaskDoneTime());
+                                                    Calendar calendar = new GregorianCalendar().getInstance();
+                                                    calendar.setTime(assignTime);
+                                                    int assignedHour = calendar.get(Calendar.HOUR_OF_DAY);
+                                                    int assignedMinute = calendar.get(Calendar.MINUTE);
+
+                                                    calendar.setTime(doneTime);
+                                                    int doneHour = calendar.get(Calendar.HOUR_OF_DAY);
+                                                    int doneMinute = calendar.get(Calendar.MINUTE);
+                                                    final int differenceHour = doneHour-assignedHour;
+                                                    final int differenceMinute = doneMinute-assignedMinute + (differenceHour*60);
+
+
+                                                    //TODO: her iş türünde (bahce,önemli 5dk ort, 10 iş) gibi bir tablo tutup burda ortalamalara göre sonucu değerlendir
+                                                    tasksAverageDF.child(task.getType()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                                            TasksAverage tasksAverage = dataSnapshot.getValue(TasksAverage.class);
+                                                            int tempCounterValue = tasksAverage.getCounter();
+
+                                                                int tempAverageMinute = tasksAverage.getMinute();
+
+                                                                if (differenceMinute <= tempAverageMinute - 5) {
+                                                                    tasksDatabaseReference.child(taskID).child("evaluation").setValue("good");
+                                                                } else if (differenceMinute >= tempAverageMinute + 5) {
+                                                                    tasksDatabaseReference.child(taskID).child("evaluation").setValue("bad");
+                                                                } else {
+                                                                    tasksDatabaseReference.child(taskID).child("evaluation").setValue("average");
+                                                                }
+
+                                                                tempAverageMinute =  tempCounterValue * tempAverageMinute;
+                                                                tempAverageMinute = (tempAverageMinute + differenceMinute)/tempCounterValue + 1;
+
+                                                                tasksAverageDF.child(task.getType()).child("minute").setValue(tempAverageMinute);
+                                                                tasksAverageDF.child(task.getType()).child("counter").setValue(tempCounterValue + 1);
+                                                        }
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                        }
+                                                    });
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                }
+                                            });
                                             Toast.makeText(getContext(), "Task is done.", Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                     builder.show();
                                 }
                             }
-
-
-
                         return false;
                     }
                 });
@@ -203,7 +261,18 @@ public class TasksFragment extends Fragment {
                         if(currentUser != null && currentUser.getPosition().equals(UserRole.Manager.toString())){
                             CharSequence optionsManager[];
                             if(model.getByWho().equals("It is in queue.")) {
-                                optionsManager = new CharSequence[]{"Update Task", "Assign Task"};
+                                optionsManager = new CharSequence[]{"Update Task", "Assign Task", "Predicted Employee"};
+                                userDatabaseReference.child(model.getPredictedEmployee()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        predictedUser = dataSnapshot.getValue(User.class);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
                             }else{
                                 optionsManager = new CharSequence[]{"Update Task"};
                             }
@@ -229,6 +298,22 @@ public class TasksFragment extends Fragment {
                                             Intent intentChooseEmployee = new Intent(getContext(), UsersActivity.class);
                                             intentChooseEmployee.putExtra("taskID", taskID);
                                             startActivity(intentChooseEmployee);
+                                        }else Toast.makeText(getContext(), "Task already assigned to an employee.", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    if(i == 2){
+                                        if(model.getByWho().equals("It is in queue.")) {
+
+                                           builder.setMessage("Predicted employee is " + predictedUser.getFullName());
+                                           builder.setNegativeButton("Exit", null);
+                                           builder.setPositiveButton("Assign", new DialogInterface.OnClickListener() {
+                                               @Override
+                                               public void onClick(DialogInterface dialog, int which) {
+                                                   tasksDatabaseReference.child(taskID).child("byWho").setValue(predictedUser.getUid());
+                                               }
+                                           });
+                                           builder.show();
+
                                         }else Toast.makeText(getContext(), "Task already assigned to an employee.", Toast.LENGTH_SHORT).show();
                                     }
                                 }
