@@ -39,15 +39,15 @@
   */
  public class ChatFragment extends Fragment {
 
-     private RecyclerView mConvList;
+     private RecyclerView rvChatList;
      private FirebaseRecyclerAdapter<Conv, ConvViewHolder> firebaseRecyclerAdapter;
-     private DatabaseReference mConvDatabase;
-     private DatabaseReference mMessageDatabase;
-     private DatabaseReference mUsersDatabase;
+     private DatabaseReference dbReferenceChat;
+     private DatabaseReference dbReferenceMessage;
+     private DatabaseReference dbReferenceUser;
 
      private FirebaseAuth mAuth;
 
-     private String mCurrent_user_id;
+     private String currentUserId;
 
      private View mMainView;
 
@@ -63,25 +63,25 @@
 
          mMainView = inflater.inflate(R.layout.fragment_chat, container, false);
 
-         mConvList = mMainView.findViewById(R.id.conv_list);
+         rvChatList = mMainView.findViewById(R.id.conv_list);
          mAuth = FirebaseAuth.getInstance();
 
          if(mAuth != null && mAuth.getCurrentUser() != null)
-         mCurrent_user_id = mAuth.getCurrentUser().getUid();
+             currentUserId = mAuth.getCurrentUser().getUid();
 
-         mConvDatabase = FirebaseDatabase.getInstance().getReference().child("Chat").child(mCurrent_user_id);
-         mConvDatabase.keepSynced(true);
+         dbReferenceChat = FirebaseDatabase.getInstance().getReference().child("Chat").child(currentUserId);
+         dbReferenceChat.keepSynced(true);
 
-         mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
-         mMessageDatabase = FirebaseDatabase.getInstance().getReference().child("messages").child(mCurrent_user_id);
-         mUsersDatabase.keepSynced(true);
+         dbReferenceUser = FirebaseDatabase.getInstance().getReference().child("Users");
+         dbReferenceMessage = FirebaseDatabase.getInstance().getReference().child("messages").child(currentUserId);
+         dbReferenceUser.keepSynced(true);
 
          LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
          linearLayoutManager.setReverseLayout(true);
          linearLayoutManager.setStackFromEnd(true);
 
-         mConvList.setHasFixedSize(true);
-         mConvList.setLayoutManager(linearLayoutManager);
+         rvChatList.setHasFixedSize(true);
+         rvChatList.setLayoutManager(linearLayoutManager);
 
 
          // Inflate the layout for this fragment
@@ -93,7 +93,7 @@
      public void onStart() {
          super.onStart();
 
-         Query query = mConvDatabase.orderByChild("timestamp");
+         Query query = dbReferenceChat.orderByChild("timestamp");
 
 
          final FirebaseRecyclerOptions<Conv> options=
@@ -107,7 +107,7 @@
                  final String list_user_id = getRef(position).getKey();
 
                  if(list_user_id != null) {
-                     Query lastMessageQuery = mMessageDatabase.child(list_user_id).limitToLast(1);
+                     Query lastMessageQuery = dbReferenceMessage.child(list_user_id).limitToLast(1);
 
                      lastMessageQuery.addChildEventListener(new ChildEventListener() {
                          @Override
@@ -143,7 +143,7 @@
                      });
 
 
-                     mUsersDatabase.child(list_user_id).addValueEventListener(new ValueEventListener() {
+                     dbReferenceUser.child(list_user_id).addValueEventListener(new ValueEventListener() {
                          @Override
                          public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -187,7 +187,7 @@
              }
          };
 
-         mConvList.setAdapter(firebaseRecyclerAdapter);
+         rvChatList.setAdapter(firebaseRecyclerAdapter);
          firebaseRecyclerAdapter.startListening();
      }
 

@@ -37,7 +37,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextView tvCreateAccount;
 
     private FirebaseAuth mAuth;
-    private DatabaseReference databaseReference;
+    private DatabaseReference dbReference;
 
     ProgressDialog progressDialog;
 
@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         mAuth = FirebaseAuth.getInstance();
         if(mAuth.getCurrentUser() != null) {
-            databaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
+            dbReference = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
         }
 
         etEmail = findViewById(R.id.etEmail);
@@ -66,10 +66,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            dbReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    databaseReference.child("online").setValue(true);
+                    dbReference.child("online").setValue(true);
                     Intent mainActivity = new Intent(LoginActivity.this,MainActivity.class);
                     startActivity(mainActivity);
                     finish();
@@ -111,12 +111,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                                     final String currentUserID = mAuth.getCurrentUser().getUid();
                                     String deviceToken = FirebaseInstanceId.getInstance().getToken();
-                                    databaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
+                                    dbReference = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
 
-                                    databaseReference.child("deviceToken").setValue(deviceToken).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    dbReference.child("deviceToken").setValue(deviceToken).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
-                                                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    dbReference.addListenerForSingleValueEvent(new ValueEventListener() {
                                                         @Override
                                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                             Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);

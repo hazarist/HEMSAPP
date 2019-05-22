@@ -49,7 +49,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private RadioButton rbGenderMale;
     private RadioButton rbGenderFemale;
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference databaseReference;
+    private DatabaseReference dbDatabaseUsers;
     Context context = this;
 
     @Override
@@ -121,7 +121,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 }
             }
 
-            if(!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password) && !TextUtils.isEmpty(password2) && !TextUtils.isEmpty(name) && !TextUtils.isEmpty(surName) && !TextUtils.isEmpty(gender) && !TextUtils.isEmpty(birthDay)){
+            if(!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password) && !TextUtils.isEmpty(password2)
+                    && !TextUtils.isEmpty(name) && !TextUtils.isEmpty(surName)
+                    && !TextUtils.isEmpty(gender) && !TextUtils.isEmpty(birthDay)){
                 if(password.equals(password2)) {
                     pdRegister.setTitle("Enrolling.");
                     pdRegister.setMessage("Creating your account.. Please wait ..");
@@ -172,12 +174,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                         firebaseDatabase = FirebaseDatabase.getInstance();
 
-                        databaseReference = firebaseDatabase.getReference().child("Users").child(uid);
+                        dbDatabaseUsers = firebaseDatabase.getReference().child("Users").child(uid);
 
 
                     User newUSer = new User(uid,name,surName,birthDay,email,position,status,gender,image,thumbImage,deviceToken);
 
-                            databaseReference.setValue(newUSer).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        dbDatabaseUsers.setValue(newUSer).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     Intent loginIntent = new Intent(RegisterActivity.this,LoginActivity.class);

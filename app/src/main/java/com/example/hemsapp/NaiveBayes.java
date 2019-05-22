@@ -2,17 +2,18 @@ package com.example.hemsapp;
 
 public class NaiveBayes {
 
+    private String[] types = {"Kitchen","Garden", "Room"};
+    private String[] evaluation = {"Good","Average", "Bad"};
+    private String[] priorities = {"Urgent","Important","Standard"};
+
         public String NaiveBayes(Instance[] Instances,int counterIns,String[] employees,int counterEmployee,Task task) {
 
-            String[] types = {"Room","Garden","Kitchen"};
-            String[] evaluation = {"Good","Average"};
-            String[] priorities = {"Urgent","Important","Standard"};
 
             RateObject[] totalProbabilities = new RateObject[counterEmployee];
 
             RateObject[] typeProbabilities = getProbabilities(employees,counterEmployee,types,Instances,counterIns,types.length*counterEmployee,0);
             RateObject[] priorityProbabilities = getProbabilities(employees,counterEmployee,priorities,Instances,counterIns,priorities.length*counterEmployee,1);
-            RateObject[] timeProbabilities = getProbabilities(employees,counterEmployee,evaluation,Instances,counterIns,evaluation.length*counterEmployee,2);
+            RateObject[] evaluationProbabilities = getProbabilities(employees,counterEmployee,evaluation,Instances,counterIns,evaluation.length*counterEmployee,2);
 
             for(int i = 0; i < counterEmployee; i++) {
                 double count = 0;
@@ -28,10 +29,13 @@ public class NaiveBayes {
             RateObject[] po = new RateObject[counterEmployee];
 
             for (int i = 0; i < po.length; i++) {
-                double a = getProbability(typeProbabilities,    task.getType(), employees[i]);
-                double b = getProbability(priorityProbabilities, task.getPriority(), employees[i]);
-                double c = getProbability(timeProbabilities, "good", employees[i]);
-                po[i] = new RateObject(employees[i],(a/totalProbabilities[i].getRate())*(b/totalProbabilities[i].getRate())*(c/totalProbabilities[i].getRate())*(totalProbabilities[i].getRate()/Instances.length));
+                double typeProbability = getProbability(typeProbabilities,    task.getType(), employees[i]);
+                double priorityProbability = getProbability(priorityProbabilities, task.getPriority(), employees[i]);
+                double evaluationProbability = getProbability(evaluationProbabilities, "Good", employees[i]);
+                po[i] = new RateObject(employees[i],( typeProbability == 0 ? 1 : typeProbability /totalProbabilities[i].getRate())
+                        *(priorityProbability == 0 ? 1 : priorityProbability/totalProbabilities[i].getRate())
+                        *(evaluationProbability == 0 ? 1 : evaluationProbability/totalProbabilities[i].getRate())
+                        *(totalProbabilities[i].getRate()/Instances.length));
             }
 
             int maxIndex = 0;
@@ -53,7 +57,7 @@ public class NaiveBayes {
                 for (int j2 = 0; j2 < counterIns; j2++) {
                     switch (c) {
                         case 0:
-                            if (attributes[j].equals(Instances[j2].getType()) && employees[i].equals(Instances[j2].getByWho())) {
+                            if (attributes[j].equals(Instances[j2].getSubtype()) && employees[i].equals(Instances[j2].getByWho())) {
                                 count++;
                             }
                             break;

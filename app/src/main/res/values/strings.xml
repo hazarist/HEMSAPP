@@ -64,4 +64,10 @@
         <item>Garden</item>
         <item>Kitchen</item>
     </string-array>
+
+    <string name="task_subtype_prompt">Choose a subtype</string>
+    <string-array name="task_subtypes">
+        <item>Service</item>
+        <item>Cleaning</item>
+    </string-array>
 </resources>

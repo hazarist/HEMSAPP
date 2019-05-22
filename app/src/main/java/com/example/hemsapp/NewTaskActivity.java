@@ -26,28 +26,30 @@ import com.google.firebase.database.ValueEventListener;
 
 public class NewTaskActivity extends AppCompatActivity implements View.OnClickListener {
 
-    TextView tvAssignedEmployee;
+    private TextView tvAssignedEmployee;
 
-    EditText etTaskName;
-    EditText etTaskDescription;
-    EditText etTaskLocation;
+    private EditText etTaskName;
+    private EditText etTaskDescription;
+    private EditText etTaskLocation;
 
-    RadioGroup radioGroup;
-    RadioButton rbUrgent;
-    RadioButton rbImportant;
-    RadioButton rbStandard;
+    private RadioGroup radioGroup;
+    private RadioButton rbUrgent;
+    private RadioButton rbImportant;
+    private RadioButton rbStandard;
 
-    Button btnAddTask;
-    Button btnChangeAssignedEmployee;
+    private Button btnAddTask;
+    private Button btnChangeAssignedEmployee;
 
-    Spinner spnTaskType;
+    private Spinner spnTaskType;
+    private Spinner spnTaskSubtype;
 
-    DatabaseReference databaseReference;
-    DatabaseReference userDatabaseReference;
+    private DatabaseReference dbReferenceTasks;
+    private DatabaseReference dbReferenceUSers;
 
     private long taskID  = 0;
 
     private String selectedTaskType;
+    private String selectedTaskSubtype;
     private String currentTaskID;
     private Task task;
     private String userUid;
@@ -86,49 +88,41 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
 
+        spnTaskSubtype = findViewById(R.id.spnTaskSubtype);
+        spnTaskSubtype.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedTaskSubtype = parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selectedTaskSubtype = parent.getItemAtPosition(0).toString();
+            }
+        });
+
         btnAddTask = findViewById(R.id.btnAddNewTask);
         btnChangeAssignedEmployee = findViewById(R.id.btnChangeAssignedEmployee);
 
         btnAddTask.setOnClickListener(this);
         btnChangeAssignedEmployee.setOnClickListener(this);
 
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Tasks");
-        userDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
+        dbReferenceTasks = FirebaseDatabase.getInstance().getReference().child("Tasks");
+        dbReferenceUSers = FirebaseDatabase.getInstance().getReference().child("Users");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                instances = new Instance[(int) dataSnapshot.getChildrenCount()];
-                counterIns = 0;
-                for (DataSnapshot insDataSanpshot : dataSnapshot.getChildren()){
-                    Instance ins = insDataSanpshot.getValue(Instance.class);
-                    if(ins.getEvaluation() != null) {
-                        instances[counterIns] = ins;
-                        counterIns++;
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-
-        userDatabaseReference.addValueEventListener(new ValueEventListener() {
+        dbReferenceUSers.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 allUsers = new String[(int)dataSnapshot.getChildrenCount()];
                 counterUser = 0;
                 for (DataSnapshot userDataSnapshot : dataSnapshot.getChildren()){
                     User user = userDataSnapshot.getValue(User.class);
-                    if(!user.getPosition().equals("Manager")) {
+                    if( !user.getStatus().equals("Busy") && !user.getPosition().equals("Manager") ) {
                         allUsers[counterUser] = user.getUid();
                         counterUser++;
                     }
@@ -148,7 +142,7 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
                 userUid = getIntent().getStringExtra("userID");
                 if(!userUid.equals("It is in queue.")) {
 
-                    userDatabaseReference.child(userUid).addListenerForSingleValueEvent(new ValueEventListener() {
+                    dbReferenceUSers.child(userUid).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             User user = dataSnapshot.getValue(User.class);
@@ -173,7 +167,7 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
             }
 
 
-            databaseReference.child(currentTaskID).addListenerForSingleValueEvent(new ValueEventListener() {
+            dbReferenceTasks.child(currentTaskID).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     task = dataSnapshot.getValue(Task.class);
@@ -187,6 +181,13 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
                         }else if(task.getType().equals("Kitchen")){
                             spnTaskType.setSelection(2);
                         }
+
+                        if(task.getSubType().equals("Service")){
+                            spnTaskSubtype.setSelection(0);
+                        }else if(task.getSubType().equals("Cleaning")){
+                            spnTaskSubtype.setSelection(1);
+                        }
+
                         etTaskLocation.setText(task.getLocation());
                         if(task.getPriority().equals("Urgent")){
                             rbUrgent.setChecked(true);
@@ -195,6 +196,7 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
                         }else if(task.getPriority().equals("Standard")){
                             rbStandard.setChecked(true);
                         }
+                        tvAssignedEmployee.setText("Update Task");
                         btnAddTask.setText("UPDATE TASK");
                     }
                 }
@@ -208,11 +210,12 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
             etTaskLocation.setText("");
             etTaskDescription.setText("");
             spnTaskType.setSelection(0);
+            spnTaskSubtype.setSelection(0);
             etTaskName.setText("");
             rbStandard.setChecked(true);
+            tvAssignedEmployee.setText("New Task");
             btnAddTask.setText("ADD TASK");
         }
-
     }
 
     @Override
@@ -222,6 +225,7 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
             String taskName = etTaskName.getText().toString();
             String taskDescription = etTaskDescription.getText().toString();
             String taskType = selectedTaskType;
+            String taskSubtpye = selectedTaskSubtype;
             String taskLocation = etTaskLocation.getText().toString();
             final int checkedItem = radioGroup.getCheckedRadioButtonId();
             String taskPriority = "";
@@ -240,12 +244,10 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
                 }
             }
 
-            if (!TextUtils.isEmpty(taskName) && !TextUtils.isEmpty(taskDescription) && !TextUtils.isEmpty(taskType) && !TextUtils.isEmpty(taskLocation) && !TextUtils.isEmpty(taskPriority)) {
-
-
+            if (!TextUtils.isEmpty(taskName) && !TextUtils.isEmpty(taskDescription) && !TextUtils.isEmpty(taskType) && !TextUtils.isEmpty(taskSubtpye) && !TextUtils.isEmpty(taskLocation) && !TextUtils.isEmpty(taskPriority)) {
 
                 if (currentTaskID == null) {
-                    task = new Task(taskName, taskDescription, taskType, taskLocation, taskPriority,"0");
+                    task = new Task(taskName, taskDescription, taskType, taskSubtpye, taskLocation, taskPriority,"0");
                 } else {
                     if (!task.getName().equals(taskName))
                         task.setName(taskName);
@@ -257,14 +259,26 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
                         task.setLocation(taskLocation);
                     if (!task.getPriority().equals(taskPriority))
                         task.setPriority(taskPriority);
+                    if (!task.getSubType().equals(taskSubtpye))
+                        task.setSubType(taskSubtpye);
                 }
 
-                NaiveBayes nv = new NaiveBayes();
-                final String predictedEmployee = nv.NaiveBayes(instances,counterIns,allUsers,counterUser,task);
-
-                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                dbReferenceTasks.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+
+                        instances = new Instance[(int) dataSnapshot.getChildrenCount()];
+                        counterIns = 0;
+                        for (DataSnapshot insDataSanpshot : dataSnapshot.getChildren()){
+                            Instance ins = insDataSanpshot.getValue(Instance.class);
+                            if(ins.getEvaluation() != null && ins.getSubtype().equals(task.getSubType())) {
+                                instances[counterIns] = ins;
+                                counterIns++;
+                            }
+                        }
+
+                        NaiveBayes nv = new NaiveBayes();
+                        final String predictedEmployee = nv.NaiveBayes(instances,counterIns,allUsers,counterUser,task);
 
                         if (currentTaskID == null) {
                             taskID = dataSnapshot.getChildrenCount() + 1;
@@ -273,11 +287,11 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
                             currentTaskID = null;
                         }
 
-                        databaseReference.child(Long.toString(taskID)).setValue(task).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        dbReferenceTasks.child(Long.toString(taskID)).setValue(task).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                databaseReference.child(Long.toString(taskID)).child("taskCreateTime").setValue(ServerValue.TIMESTAMP);
-                                databaseReference.child(Long.toString(taskID)).child("predictedEmployee").setValue(predictedEmployee);
+                                dbReferenceTasks.child(Long.toString(taskID)).child("taskCreateTime").setValue(ServerValue.TIMESTAMP);
+                                dbReferenceTasks.child(Long.toString(taskID)).child("predictedEmployee").setValue(predictedEmployee);
                             }
                         });
 
@@ -293,12 +307,15 @@ public class NewTaskActivity extends AppCompatActivity implements View.OnClickLi
                 etTaskLocation.setText("");
                 etTaskDescription.setText("");
                 spnTaskType.setSelection(0);
+                spnTaskSubtype.setSelection(0);
                 etTaskName.setText("");
                 rbStandard.setChecked(true);
+                tvAssignedEmployee.setText("New Task");
                 btnAddTask.setText("ADD TASK");
             } else {
                 Toast.makeText(NewTaskActivity.this, "Please fill the blanks!", Toast.LENGTH_SHORT).show();
             }
         }
     }
+
 }

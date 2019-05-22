@@ -25,7 +25,7 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-    private DatabaseReference userDatabaseReference;
+    private DatabaseReference dbReferenceUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
 
         if(mAuth.getCurrentUser() != null) {
-            userDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
+            dbReferenceUser = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
         }
         //Tabs
         vPager = findViewById(R.id.viewPager);
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         if(currentUser == null){
             startActivityLogin();
         }else{
-            userDatabaseReference.child("online").setValue(true);
+            dbReferenceUser.child("online").setValue(true);
         }
     }
 
@@ -72,15 +72,15 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-            userDatabaseReference.child("online").setValue(false);
-            userDatabaseReference.child("lastSeen").setValue(ServerValue.TIMESTAMP);
+            dbReferenceUser.child("online").setValue(false);
+            dbReferenceUser.child("lastSeen").setValue(ServerValue.TIMESTAMP);
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         super.onCreateOptionsMenu(menu);
-        userDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        dbReferenceUser.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User currentUser = dataSnapshot.getValue(User.class);
@@ -105,7 +105,11 @@ public class MainActivity extends AppCompatActivity {
         super.onOptionsItemSelected(item);
 
         if(item.getItemId() == R.id.btnLogOut){
+
             FirebaseAuth.getInstance().signOut();
+            dbReferenceUser.child("online").setValue(false);
+            dbReferenceUser.child("lastSeen").setValue(ServerValue.TIMESTAMP);
+            dbReferenceUser.child("deviceToken").setValue("");
             startActivityLogin();
         }
 

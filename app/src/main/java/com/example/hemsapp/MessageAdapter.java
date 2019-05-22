@@ -33,7 +33,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
 
     private List<Messages> mMessageList;
-    private DatabaseReference databaseReference;
+    private DatabaseReference dbReferenceUser;
 
     public MessageAdapter(List<Messages> mMessageList) {
 
@@ -79,9 +79,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         final String fromUser = c.getFrom();
         final String message_type = c.getType();
 
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child(fromUser);
+        dbReferenceUser = FirebaseDatabase.getInstance().getReference().child("Users").child(fromUser);
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        dbReferenceUser.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 final User user = dataSnapshot.getValue(User.class);

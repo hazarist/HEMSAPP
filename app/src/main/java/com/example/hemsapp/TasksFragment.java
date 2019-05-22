@@ -50,15 +50,16 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class TasksFragment extends Fragment {
 
-    private View taskView;
-    private RecyclerView taskList;
-    private DatabaseReference tasksDatabaseReference;
-    private DatabaseReference tasksAverageDF;
-    private DatabaseReference userDatabaseReference;
+    private View mMainView;
+    private RecyclerView rvTaskList;
+    private DatabaseReference dbReferenceTasks;
+    private DatabaseReference dbReferenceTaskAverage;
+    private DatabaseReference dbReferenceUser;
     private FirebaseRecyclerAdapter<Task,TaskViewHolder> firebaseRecyclerAdapter;
-    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth mAuth;
     private static User currentUser ;
     private User predictedUser;
+
     public TasksFragment() {
         // Required empty public constructor
     }
@@ -71,20 +72,20 @@ public class TasksFragment extends Fragment {
 
 
 
-        taskView = inflater.inflate(R.layout.fragment_tasks, container, false);
+        mMainView = inflater.inflate(R.layout.fragment_tasks, container, false);
 
-        taskList = taskView.findViewById(R.id.task_list);
+        rvTaskList = mMainView.findViewById(R.id.task_list);
 
-        tasksDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Tasks");
-        tasksDatabaseReference.keepSynced(true);
+        dbReferenceTasks = FirebaseDatabase.getInstance().getReference().child("Tasks");
+        dbReferenceTasks.keepSynced(true);
 
-        tasksAverageDF = FirebaseDatabase.getInstance().getReference().child("TasksAverage");
+        dbReferenceTaskAverage = FirebaseDatabase.getInstance().getReference().child("TasksAverage");
 
-        userDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
+        dbReferenceUser = FirebaseDatabase.getInstance().getReference().child("Users");
 
-        firebaseAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
-        userDatabaseReference.child(firebaseAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        dbReferenceUser.child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 currentUser = dataSnapshot.getValue(User.class);
@@ -96,10 +97,10 @@ public class TasksFragment extends Fragment {
             }
         });
 
-        taskList.setHasFixedSize(true);
-        taskList.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvTaskList.setHasFixedSize(true);
+        rvTaskList.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        return taskView;
+        return mMainView;
     }
 
     @Override
@@ -107,7 +108,7 @@ public class TasksFragment extends Fragment {
         super.onStart();
 
         //TODO: order by their priority
-        Query query = tasksDatabaseReference.orderByChild("isDeleted").equalTo("0");
+        Query query = dbReferenceTasks.orderByChild("isDeleted").equalTo("0");
 
         FirebaseRecyclerOptions<Task> options =
                 new FirebaseRecyclerOptions.Builder<Task>()
@@ -136,7 +137,7 @@ public class TasksFragment extends Fragment {
                                 builder.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        tasksDatabaseReference.child(taskID).child("isDeleted").setValue("1");
+                                        dbReferenceTasks.child(taskID).child("isDeleted").setValue("1");
                                     }
                                 });
                                 builder.show();
@@ -162,9 +163,9 @@ public class TasksFragment extends Fragment {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             if (model.getByWho().equals("It is in queue.")) {
-                                                tasksDatabaseReference.child(taskID).child("byWho").setValue(currentUser.getUid());
-                                                tasksDatabaseReference.child(taskID).child("taskAssignTime").setValue(ServerValue.TIMESTAMP);
-                                                userDatabaseReference.child(currentUser.getUid()).child("status").setValue("Busy");
+                                                dbReferenceTasks.child(taskID).child("byWho").setValue(currentUser.getUid());
+                                                dbReferenceTasks.child(taskID).child("taskAssignTime").setValue(ServerValue.TIMESTAMP);
+                                                dbReferenceUser.child(currentUser.getUid()).child("status").setValue("Busy");
                                                 Toast.makeText(getContext(), "Task assigned to you.", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 if (model.getByWho().equals(currentUser.getUid())) {
@@ -185,11 +186,11 @@ public class TasksFragment extends Fragment {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
 
-                                            tasksDatabaseReference.child(taskID).child("taskDoneTime").setValue(ServerValue.TIMESTAMP);
-                                            tasksDatabaseReference.child(taskID).child("state").setValue("done");
-                                            userDatabaseReference.child(currentUser.getUid()).child("status").setValue("Available");
+                                            dbReferenceTasks.child(taskID).child("taskDoneTime").setValue(ServerValue.TIMESTAMP);
+                                            dbReferenceTasks.child(taskID).child("state").setValue("done");
+                                            dbReferenceUser.child(currentUser.getUid()).child("status").setValue("Available");
 
-                                            tasksDatabaseReference.child(taskID).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            dbReferenceTasks.child(taskID).addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -208,8 +209,7 @@ public class TasksFragment extends Fragment {
                                                     final int differenceMinute = doneMinute-assignedMinute + (differenceHour*60);
 
 
-                                                    //TODO: her iş türünde (bahce,önemli 5dk ort, 10 iş) gibi bir tablo tutup burda ortalamalara göre sonucu değerlendir
-                                                    tasksAverageDF.child(task.getType()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    dbReferenceTaskAverage.child(task.getType()).addListenerForSingleValueEvent(new ValueEventListener() {
                                                         @Override
                                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -219,18 +219,18 @@ public class TasksFragment extends Fragment {
                                                                 int tempAverageMinute = tasksAverage.getMinute();
 
                                                                 if (differenceMinute <= tempAverageMinute - 5) {
-                                                                    tasksDatabaseReference.child(taskID).child("evaluation").setValue("good");
+                                                                    dbReferenceTasks.child(taskID).child("evaluation").setValue("good");
                                                                 } else if (differenceMinute >= tempAverageMinute + 5) {
-                                                                    tasksDatabaseReference.child(taskID).child("evaluation").setValue("bad");
+                                                                    dbReferenceTasks.child(taskID).child("evaluation").setValue("bad");
                                                                 } else {
-                                                                    tasksDatabaseReference.child(taskID).child("evaluation").setValue("average");
+                                                                    dbReferenceTasks.child(taskID).child("evaluation").setValue("average");
                                                                 }
 
                                                                 tempAverageMinute =  tempCounterValue * tempAverageMinute;
                                                                 tempAverageMinute = (tempAverageMinute + differenceMinute)/tempCounterValue + 1;
 
-                                                                tasksAverageDF.child(task.getType()).child("minute").setValue(tempAverageMinute);
-                                                                tasksAverageDF.child(task.getType()).child("counter").setValue(tempCounterValue + 1);
+                                                            dbReferenceTaskAverage.child(task.getType()).child("minute").setValue(tempAverageMinute);
+                                                            dbReferenceTaskAverage.child(task.getType()).child("counter").setValue(tempCounterValue + 1);
                                                         }
                                                         @Override
                                                         public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -258,11 +258,10 @@ public class TasksFragment extends Fragment {
                 holder.mview.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(currentUser != null && currentUser.getPosition().equals(UserRole.Manager.toString())){
+                        if(currentUser != null && currentUser.getPosition().equals(UserRole.Manager.toString()) && model.getByWho().equals("It is in queue.")){
                             CharSequence optionsManager[];
-                            if(model.getByWho().equals("It is in queue.")) {
                                 optionsManager = new CharSequence[]{"Update Task", "Assign Task", "Predicted Employee"};
-                                userDatabaseReference.child(model.getPredictedEmployee()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                dbReferenceUser.child(model.getPredictedEmployee()).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         predictedUser = dataSnapshot.getValue(User.class);
@@ -273,9 +272,7 @@ public class TasksFragment extends Fragment {
 
                                     }
                                 });
-                            }else{
-                                optionsManager = new CharSequence[]{"Update Task"};
-                            }
+
                             final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
                             builder.setTitle("Select Options");
@@ -309,7 +306,7 @@ public class TasksFragment extends Fragment {
                                            builder.setPositiveButton("Assign", new DialogInterface.OnClickListener() {
                                                @Override
                                                public void onClick(DialogInterface dialog, int which) {
-                                                   tasksDatabaseReference.child(taskID).child("byWho").setValue(predictedUser.getUid());
+                                                   dbReferenceTasks.child(taskID).child("byWho").setValue(predictedUser.getUid());
                                                }
                                            });
                                            builder.show();
@@ -334,7 +331,7 @@ public class TasksFragment extends Fragment {
             }
         };
 
-        taskList.setAdapter(firebaseRecyclerAdapter);
+        rvTaskList.setAdapter(firebaseRecyclerAdapter);
         firebaseRecyclerAdapter.startListening();
     }
 

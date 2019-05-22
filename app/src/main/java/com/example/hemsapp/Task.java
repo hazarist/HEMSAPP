@@ -15,10 +15,11 @@ public class Task {
     private String isDeleted;
     private String evaluation;
     private String predictedEmployee;
+    private String subType;
 
     public Task() { } // for firebase
 
-    public Task(String name, String description, String type, String location, String priority,String isDeleted) {
+    public Task(String name, String description, String type,String subType, String location, String priority,String isDeleted) {
         this.name = name;
         this.description = description;
         this.state = "waiting";
@@ -27,6 +28,7 @@ public class Task {
         this.location = location;
         this.priority = priority;
         this.isDeleted = isDeleted;
+        this.subType = subType;
     }
 
     public String getName() {
@@ -131,5 +133,13 @@ public class Task {
 
     public void setPredictedEmployee(String predictedEmployee) {
         this.predictedEmployee = predictedEmployee;
+    }
+
+    public String getSubType() {
+        return subType;
+    }
+
+    public void setSubType(String subType) {
+        this.subType = subType;
     }
 }

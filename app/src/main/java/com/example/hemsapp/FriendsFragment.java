@@ -37,11 +37,11 @@ public class FriendsFragment extends Fragment {
 
     private FirebaseRecyclerAdapter<User, FriendsViewHolder> firebaseRecyclerAdapter;
 
-    private RecyclerView mFriendsList;
+    private RecyclerView rvFriendsList;
 
-    private DatabaseReference mUsersDatabase;
+    private DatabaseReference dbReferenceUsers;
 
-    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth mAuth;
 
     private View mMainView;
 
@@ -58,14 +58,14 @@ public class FriendsFragment extends Fragment {
 
         mMainView = inflater.inflate(R.layout.fragment_frends, container, false);
 
-        mFriendsList = mMainView.findViewById(R.id.rvFirendList);
+        rvFriendsList = mMainView.findViewById(R.id.rvFirendList);
 
-        firebaseAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
-        mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
-        mUsersDatabase.keepSynced(true);
+        dbReferenceUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        dbReferenceUsers.keepSynced(true);
 
-        mUsersDatabase.child(firebaseAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        dbReferenceUsers.child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 currentUser = dataSnapshot.getValue(User.class);
@@ -77,8 +77,8 @@ public class FriendsFragment extends Fragment {
             }
         });
 
-        mFriendsList.setHasFixedSize(true);
-        mFriendsList.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvFriendsList.setHasFixedSize(true);
+        rvFriendsList.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Inflate the layout for this fragment
         return mMainView;
@@ -91,7 +91,7 @@ public class FriendsFragment extends Fragment {
 
         FirebaseRecyclerOptions<User> options=
                 new FirebaseRecyclerOptions.Builder<User>()
-                        .setQuery(mUsersDatabase,User.class)
+                        .setQuery(dbReferenceUsers,User.class)
                         .setLifecycleOwner(this)
                         .build();
 
@@ -110,8 +110,7 @@ public class FriendsFragment extends Fragment {
 
                 if (holder != null) {
 
-
-                if( currentUser != null && (currentUser.getUid().equals(user.getUid()) || user.getName().equals("admin"))) {
+                if( currentUser != null && user.getUid() != null && (currentUser.getUid().equals(user.getUid()) || user.getName().equals("Admin"))) {
                     holder.itemView.setVisibility(View.GONE);
                     holder.itemView.setLayoutParams(new LinearLayout.LayoutParams(0,0));
                 }
@@ -163,7 +162,7 @@ public class FriendsFragment extends Fragment {
 
 
 
-        mFriendsList.setAdapter(firebaseRecyclerAdapter);
+        rvFriendsList.setAdapter(firebaseRecyclerAdapter);
         firebaseRecyclerAdapter.startListening();
     }
 

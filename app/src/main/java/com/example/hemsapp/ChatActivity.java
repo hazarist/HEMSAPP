@@ -19,7 +19,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Gallery;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,19 +60,19 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private String currentUserID;
 
-    TextView tvFullName;
-    TextView tvLastSeen;
-    CircleImageView ivChatUserImage;
+    private TextView tvFullName;
+    private TextView tvLastSeen;
+    private CircleImageView ivChatUserImage;
 
     private ImageButton btnChatAdd;
     private ImageButton btnChatSend;
     private EditText etChatMessage;
-    String chatUser;
-    DatabaseReference rootRef;
+    private String chatUser;
+    private DatabaseReference rootRef;
 
     private RecyclerView mMessagesList;
     private List<Messages> messagesList = new ArrayList<>();
-    LinearLayoutManager linearLayoutManager;
+    private LinearLayoutManager linearLayoutManager;
     private MessageAdapter messageAdapter;
     private SwipeRefreshLayout refreshLayout;
 
@@ -85,7 +84,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private String mPrevKey;
 
     private StorageReference mImageStorage;
-
 
     private ProgressDialog progressDialog;
 

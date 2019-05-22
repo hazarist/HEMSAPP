@@ -25,7 +25,7 @@ public class SectionPageAdapter extends FragmentPagerAdapter {
             case 2:
                 return  tasksFragment;
             default:
-                return chatFragment;
+                return tasksFragment;
         }
     }
 
@@ -41,7 +41,7 @@ public class SectionPageAdapter extends FragmentPagerAdapter {
             case 2:
                 return "TASKS";
             default:
-                return "CHATS";
+                return "TASKS";
         }
     }
 }
