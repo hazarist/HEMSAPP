@@ -149,7 +149,14 @@ public class TasksFragment extends Fragment {
                                 if(model.getByWho().equals("It is in queue.")) {
 
                                     builder.setTitle("Take a task.");
-                                    builder.setMessage("Do you want to take this task?");
+                                    builder.setMessage(
+                                              "Task Name: " + model.getName() + "\n"
+                                            + "Task Type: " + model.getType() + "\n"
+                                            + "Task Subtype: "+ model.getSubType() + "\n"
+                                            + "Task Description: " + model.getDescription() + "\n"
+                                            + "Task Location: " + model.getLocation() + "\n"
+                                            + "Task Priority: " + model.getPriority()  + "\n"
+                                            +"\nDo you want to take this task?");
 
                                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                                     @Override
@@ -307,6 +314,7 @@ public class TasksFragment extends Fragment {
                                                @Override
                                                public void onClick(DialogInterface dialog, int which) {
                                                    dbReferenceTasks.child(taskID).child("byWho").setValue(predictedUser.getUid());
+                                                   dbReferenceUser.child(predictedUser.getUid()).child("status").setValue("Busy");
                                                }
                                            });
                                            builder.show();
